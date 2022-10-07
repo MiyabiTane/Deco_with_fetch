@@ -1,0 +1,14 @@
+std_msgs/Header header
+sensor_msgs/Image back_img
+sensor_msgs/Image decos_img
+jsk_recognition_msgs/PlotData[] decos_rec_uv
+geometry_msgs/Point[] decos_pos
+geometry_msgs/Point[] decos_dims
+geometry_msgs/Point bimg_lt_pos
+geometry_msgs/Point bimg_rb_pos
+std_msgs/Float64 head_angle
+geometry_msgs/Point look_at_point
+geometry_msgs/Point look_at_uv
+geometry_msgs/Point[] dimg_rect_pos
+---
+geometry_msgs/PoseArray result_pos
