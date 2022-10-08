@@ -20,5 +20,15 @@
 (ros::load-ros-package "jsk_recognition_msgs")
 (ros::load-ros-package "deco_with_fetch")
 
-(defvar *camera-frame-id* "head_camera_rgb_optical_frame")
-(defvar *base-frame-id* "base_link")
+(defvar *camera-frame* "head_camera_rgb_optical_frame")
+(defvar *base-frame* "base_link")
+(defvar *head-camera-points* "/head_camera/depth_registered/points")
+
+;; global variables
+(setq pre_x -1)
+(setq *look-at-pos* #f(500 0 1000))
+
+;; load files
+(load "common_func.l")
+(load "test_push_balloon.l")
+
