@@ -6,8 +6,9 @@
 ;; robot model
 (load "package://fetcheus/fetch-interface.l")
 (setq *fetch* (fetch))
-(objects (list *fetch*))
-(setq *ri* (instance fetch-interface :init))
+;; (objects (list *fetch*))
+;; (setq *ri* (instance fetch-interface :init))
+(unless (boundp '*ri*) (setq *ri* (instance fetch-interface :init)))
 
 ;; use tf
 (unless (boundp '*tfl*)

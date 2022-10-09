@@ -34,7 +34,7 @@
         args="load jsk_pcl/AttentionClipper $(arg manager)">
     <remap from="~input/points" to="$(arg input_points)" />
     <rosparam>
-      initial_pos: [1.0, 0, 1.2]
+      initial_pos: [1.0, 0, 1.1]
       initial_rot: [0, 0, 0]
       dimension_x: 3.0
       dimension_y: 3.0

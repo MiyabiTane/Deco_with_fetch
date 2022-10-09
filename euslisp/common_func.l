@@ -20,8 +20,8 @@
     arm_end_pos)
   )
 
-(defun go-vel-rotate (move_rad)  ;; move_rad[rad]
-  (send *ri* :go-velocity 0 0 move_rad 1000 :wait t)
+(defun go-vel-rotate (move_rad)  ;; move_rad[rad] move_time[s]
+  (send *ri* :go-velocity 0 0 move_rad)
   (send *ri* :wait-interpolation)
   )
 
