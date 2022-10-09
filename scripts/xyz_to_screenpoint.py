@@ -11,39 +11,28 @@ class XYZToScreenPoint(object):
     def __init__(self):
         self.cameramodels = PinholeCameraModel()
         self.base_frame_id = "base_link"
-        self.camera_frame_id = "head_camera_rgb_optical_frame"
+        self.camera_frame_id = ""
 
-        self.set_camera_param()
-    
-    def set_camera_param(self):
-        camera_msg = CameraInfo()
-        camera_msg.header.frame_id = self.camera_frame_id
-        camera_msg.height = 480
-        camera_msg.width = 640
-        camera_msg.distortion_model = "plumb_bob"
-        camera_msg.D = [0.0, 0.0, 0.0, 0.0, 0.0]
-        camera_msg.K = [554.254691191187, 0.0, 320.5, 0.0, 554.254691191187, 240.5, 0.0, 0.0, 1.0]
-        camera_msg.R = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-        camera_msg.P = [554.254691191187, 0.0, 320.5, -0.0, 0.0, 554.254691191187, 240.5, 0.0, 0.0, 0.0, 1.0, 0.0]
-        camera_msg.binning_x = 0
-        camera_msg.binning_y = 0
-        camera_msg.roi.x_offset = 0
-        camera_msg.roi.y_offset = 0
-        camera_msg.roi.height = 0
-        camera_msg.roi.width = 0
-        camera_msg.roi.do_rectify = False
-        self.cameramodels.fromCameraInfo(camera_msg)
-    
+        self.is_camera_arrived = False
+
+        rospy.Subscriber("~input/camera_info", CameraInfo, self.camera_info_cb)
+
+    def camera_info_cb(self, msg):
+        self.cameramodels.fromCameraInfo(msg)
+        self.camera_frame_id = msg.header.frame_id
+        self.is_camera_arrived = True
+
     def srv_cb(self, req):
-        point = (req.point.x, req.point.y, req.point.z)
-        u, v = self.cameramodels.project3dToPixel(point)
-        rospy.logdebug("u, v : {}, {}".format(u, v))
-        pub_msg = Point()
-        pub_msg.x = u
-        pub_msg.y = v
-        pub_msg.z = 0
+        if self.is_camera_arrived:
+            point = (req.point.x, req.point.y, req.point.z)
+            u, v = self.cameramodels.project3dToPixel(point)
+            rospy.logdebug("u, v : {}, {}".format(u, v))
+            pub_msg = Point()
+            pub_msg.x = u
+            pub_msg.y = v
+            pub_msg.z = 0
         
-        return PointStampedResponse(pub_msg)
+            return PointStampedResponse(pub_msg)
     
 if __name__ == '__main__':
     rospy.init_node("xyz_to_screenpoint")

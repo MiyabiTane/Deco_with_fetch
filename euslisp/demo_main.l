@@ -24,12 +24,26 @@
 (defvar *camera-frame* "head_camera_rgb_optical_frame")
 (defvar *base-frame* "base_link")
 (defvar *head-camera-points* "/head_camera/depth_registered/points")
+(defvar *head-camera-img* "/head_camera/rgb/image_raw")
 
 ;; global variables
 (setq pre_x -1)
-(setq *look-at-pos* #f(500 0 1000))
+(setq *look-at-pos* #f(500 0 1100))
+(setq *dimg-req-msg* (instance deco_with_fetch::DecoImgsRequest :init))
+(setq *wall-pcl* nil)
+(setq *wall-x* nil)
 
 ;; load files
 (load "common_func.l")
+(load "recognize_wall.l")
+
 (load "test_push_balloon.l")
 
+;; main
+(defun main ()
+  (send *fetch* :reset-pose)
+  (send *fetch* :head :look-at *look-at-pos*)
+  (send-robot 4000)
+
+  ;; (recognize-wall)
+  )
