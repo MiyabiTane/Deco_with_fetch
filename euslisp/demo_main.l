@@ -32,6 +32,7 @@
 (setq *dimg-req-msg* (instance deco_with_fetch::DecoImgsRequest :init))
 (setq *wall-pcl* nil)
 (setq *wall-x* nil)
+(setq *torso-z* 20)
 
 ;; load files
 (load "common_func.l")
@@ -43,7 +44,10 @@
 (defun main ()
   (send *fetch* :reset-pose)
   (send *fetch* :head :look-at *look-at-pos*)
+  (send *fetch* :torso :waist-z :joint-angle *torso-z*)
   (send-robot 4000)
 
   ;; (recognize-wall)
   )
+
+(main)
