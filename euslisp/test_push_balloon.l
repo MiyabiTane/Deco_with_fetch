@@ -1,6 +1,6 @@
 #!/usr/bin/env roseus
 
-(setq *MOVE-X-OFFSET* (/ 600.0 1000))
+(setq *MOVE-X-OFFSET* (/ 500.0 1000))
 
 (defun inv-from-reset-pose (target_pos)
   (send *fetch* :reset-pose)
@@ -10,10 +10,10 @@
   )
 
 (defun get-distance-wall (x y)
-  (let* ((x x) (y y) (wall_x)
-	 (wall_pcl
-	  (one-shot-subscribe *head-camera-points*
-			      sensor_msgs::PointCloud2 :after-stamp (ros::time-now))))
+  (let* ((x x) (y y) (wall_x) (wall_pcl))
+    (ros::duration-sleep 1.0)
+    (setq wall_pcl (one-shot-subscribe *head-camera-points*
+				       sensor_msgs::PointCloud2 :after-stamp (ros::time-now)))
     (convert-2D->3D x y wall_pcl)
     (convert-2D->3D x y wall_pcl) ;; to get more correct value
     (setq wall_x (elt result_3d_pos 0))
@@ -57,18 +57,25 @@
       )
     ))
 
-(defun push-balloon (thresh)
+(defun push-balloon (thresh1 thresh2)
   ;; thresh: diff between ideal and real [mm]
   (let* ((diff_x 0)
 	 (real_x (elt (get-arm-end-pos) 0))
-	 (ideal_x real_x))
-    (while (< diff_x thresh)
+	 (ideal_x real_x)
+	 (diff_wall_x 0)
+	 (init_wall_x (get-distance-wall 0 0))
+	 (real_wall_x init_wall_x))
+    (while (and (< diff_x thresh1) (< diff_wall_x thresh2))
       (send *fetch* :rarm :move-end-pos #f(20 0 0) :world)
       (send-robot 1000)
       (setq ideal_x (+ ideal_x 20))
       (setq real_x (elt (get-arm-end-pos) 0))
       (setq diff_x (- ideal_x real_x))
-      (format t "diff_x: ~A~%" diff_x))
+      (format t "diff_x: ~A~%" diff_x)
+      (setq real_wall_x (get-distance-wall 0 0))
+      (setq diff_wall_x (- real_wall_x init_wall_x))
+      (format t "diff_wall_x ~A~%" diff_wall_x)
+      )
     ))
 
 (defun set-balloon (goal_pos)
@@ -92,12 +99,12 @@
     (if (< (- (elt goal_pos 2) (elt arm_end_pos 2)) 0)
 	(setq rarm_up (+ (- (elt goal_pos 2) (elt arm_end_pos 2)) 20)))
     (send *fetch* :torso :waist-z :joint-angle (- (elt goal_pos 2) (elt arm_end_pos 2)))
-    (send *fetch* :rarm :move-end-pos (float-vector 0 0 rarm_up) :world)
+    (send *fetch* :rarm :move-end-pos (float-vector 100 0 rarm_up) :world)
     (send-robot 4000)
-    (push-balloon 0.2)
+    (push-balloon 0.2 10.0)
     (send *ri* :stop-grasp)
     (send *fetch* :rarm :move-end-pos #f(-50 0 0) :world)
-    (send-robot 4000)
+    (send-robot 2000)
     (send *fetch* :rarm :move-end-pos #f(0 0 -100) :world)
     (send-robot 2000)
     (send *fetch* :rarm :move-end-pos #f(-200 0 0) :world)
@@ -108,10 +115,10 @@
 (defun repush-balloon ()
   (send *fetch* :rarm :move-end-pos #f(0 0 100) :world)
   (send-robot 2000)
-  (send *fetch* :rarm :move-end-pos #f(200 0 0) :world)
+  (send *fetch* :rarm :move-end-pos #f(150 0 0) :world)
   (send-robot 2000)
-  (push-balloon 0.2)
-  (send *fetch* :rarm :move-end-pos #f(300 0 0) :world)
+  (push-balloon 0.2 10.0)
+  (send *fetch* :rarm :move-end-pos #f(-300 0 0) :world)
   (send-robot 2000)
   (send *fetch* :reset-pose)
   (send *fetch* :torso :waist-z :joint-angle *torso-z*)

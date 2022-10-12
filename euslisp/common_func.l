@@ -1,9 +1,9 @@
 #!/usr/bin/env roseus
 
-(setq *sp-screenpoint-pub-topic* "/screen_point/input/screenpoint")
-(setq *sp-points-pub-topic* "/screen_point/input/points")
-(setq *sp-sub-topic* "/pointcloud_screenpoint_nodelet/output_point")
-(setq *plane-norm-sub-topic* "/plane_normal_vector/output")
+(defvar *sp-screenpoint-pub-topic* "/screen_point/input/screenpoint")
+(defvar *sp-points-pub-topic* "/screen_point/input/points")
+(defvar *sp-sub-topic* "/pointcloud_screenpoint_nodelet/output_point")
+(defvar *plane-norm-sub-topic* "/plane_normal_vector/output")
 
 (ros::advertise *sp-screenpoint-pub-topic* geometry_msgs::PointStamped 1)
 (ros::advertise *sp-points-pub-topic* sensor_msgs::PointCloud2 1)
@@ -21,13 +21,22 @@
   )
 
 (defun go-vel-rotate (move_rad)  ;; move_rad[rad] move_time[s]
-  (send *ri* :go-velocity 0 0 move_rad)
+  (if (< move_rad 0)
+      (send *ri* :go-velocity 0 0 (- move_rad 0.15))
+    (send *ri* :go-velocity 0 0 move_rad))
   (send *ri* :wait-interpolation)
   )
 
 (defun go-vel-linear (move_x move_time)  ;; move_x[m] move_time[s]
   (send *ri* :go-velocity (/ move_x move_time) 0 0 (* 1000 move_time) :wait t)
   (send *ri* :wait-interpolation)
+  )
+
+(defun make-reset-pose ()
+  (send *fetch* :reset-pose)
+  (send *fetch* :head :look-at *look-at-pos*)
+  (send *fetch* :torso :waist-z :joint-angle *torso-z*)
+  (send-robot 4000)
   )
 
 (defun screen-pos-cb (msg)
@@ -124,3 +133,26 @@
   (ros::unsubscribe *plane-norm-sub-topic*)
   )
 
+(defun tf-pose->coords (frame_id pose)
+  (send (send *tfl* :lookup-transform *base-frame* frame_id (ros::time 0))
+	:transform (ros::tf-pose->coords pose))
+  )
+
+(defun bbox->cube (bbox)
+  (let* ((dims (ros::tf-point->pos (send bbox :dimensions)))
+         (bx (make-cube (elt dims 0) (elt dims 1) (elt dims 2))))
+    (send bx :newcoords
+          (tf-pose->coords (send bbox :header :frame_id) (send bbox :pose)))
+    bx))
+
+(defun view-debug-box (i)
+  (setq debug_cube (bbox->cube (elt *bboxes* i)))
+  (objects (list *fetch* debug_cube))
+  )
+
+(defun bbox->lst (bbox)
+  (let* ((coords (tf-pose->coords (send bbox :header :frame_id) (send bbox :pose)))
+	 (pos (send coords :pos))
+	 (dims (ros::tf-point->pos (send bbox :dimensions))))
+    (list coords dims))
+  )

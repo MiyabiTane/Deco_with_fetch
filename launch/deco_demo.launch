@@ -3,6 +3,7 @@
   <arg name="run_rviz" default="false" />
   <arg name="input_points" default="/head_camera/depth_registered/points" />
   <arg name="camera_info" default="/head_camera/rgb/camera_info" />
+  <arg name="sensor_frame" default="/head_camera_rgb_optical_frame" />
   <arg name="launch_tracking" default="false" />
   <arg name="publish_objects_tf" default="true" />
   <arg name="manager" default="deco_nodelet_manager" />
@@ -90,7 +91,7 @@
   <node name="extract_indices"
         pkg="nodelet" type="nodelet" respawn="true"
         args="load jsk_pcl/ExtractIndices $(arg manager)">
-    <remap from="~input" to="/kinect_head/depth_registered/throttled/points" />
+    <remap from="~input" to="$(arg input_points)" />
     <remap from="~indices" to="attention_clipper/output/point_indices" />
     <rosparam>
       keep_organized: true
@@ -99,7 +100,7 @@
 
   <include file="$(find jsk_pcl_ros)/sample/tabletop_object_detector.launch">
     <arg name="input" value="/extract_indices/output" />
-    <arg name="sensor_frame" value="/head_mount_kinect_rgb_optical_frame" />
+    <arg name="sensor_frame" value="$(arg sensor_frame)" />
     <arg name="manager" value="$(arg manager)" />
     <arg name="machine" value="$(arg machine)" />
     <arg name="launch_openni" value="false" />

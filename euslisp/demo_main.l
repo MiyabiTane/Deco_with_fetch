@@ -33,21 +33,19 @@
 (setq *wall-pcl* nil)
 (setq *wall-x* nil)
 (setq *torso-z* 20)
+(setq *bboxes* '())
 
 ;; load files
 (load "common_func.l")
 (load "recognize_wall.l")
+(load "recognize_decoration.l")
 
 (load "test_push_balloon.l")
 
 ;; main
 (defun main ()
-  (send *fetch* :reset-pose)
-  (send *fetch* :head :look-at *look-at-pos*)
-  (send *fetch* :torso :waist-z :joint-angle *torso-z*)
-  (send-robot 4000)
-
-  ;; (recognize-wall)
+  (make-reset-pose)
+  (recognize-wall)
   )
 
 (main)
