@@ -15,7 +15,7 @@ ALPHA = 0
 TEMP_TH = 0.9
 INPUT_NAME = "share/pix2pix_input.jpg"
 OUTPUT_NAME = "share/pix2pix_output.jpg"
-DIR_PATH = roslib.packages.get_pkg_dir('deco_with_fetch') + "/scripts"
+DIR_PATH = roslib.packages.get_pkg_dir('deco_with_fetch') + "/scripts/"
 
 
 # you need to run: deco_with_fetch/scripts$ docker image build -t deco_tensor .

@@ -34,11 +34,13 @@
 (setq *wall-x* nil)
 (setq *torso-z* 20)
 (setq *bboxes* '())
+(setq *place-pos-lst* '())
 
 ;; load files
 (load "common_func.l")
 (load "recognize_wall.l")
 (load "recognize_decoration.l")
+(load "think_decoration.l")
 
 (load "test_push_balloon.l")
 
@@ -46,6 +48,8 @@
 (defun main ()
   (make-reset-pose)
   (recognize-wall)
+  (recognize-decoration)
+  (think-decoration)
   )
 
 (main)

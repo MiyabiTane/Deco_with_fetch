@@ -66,9 +66,9 @@ class MakeDecoImgs(object):
         pts2 = np.float32([[0, 0], [width, 0], [0, height], [width, height]])
         M_matrix = cv2.getPerspectiveTransform(pts1, pts2)
         img_trans = cv2.warpPerspective(self.decos_img, M_matrix, (width, height))
-        cv2.imwrite(save_name, img_trans)
+        # cv2.imwrite(save_name, img_trans)
         # resize
-        img_trans = cv2.imread(save_name)
+        # img_trans = cv2.imread(save_name)
         bimg_width = self.bimg_lt_pos.y - self.bimg_rb_pos.y
         bimg_height = self.bimg_lt_pos.z - self.bimg_rb_pos.z
         ratio_w = deco_3d_dims.y / bimg_width

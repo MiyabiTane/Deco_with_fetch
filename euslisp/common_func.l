@@ -57,6 +57,7 @@
   (let* ((x x) (y y) (points_msg points_msg)
 	 (pub_xy_msg (instance geometry_msgs::PointStamped :init)))
     (ros::subscribe *sp-sub-topic* geometry_msgs::PointStamped #'screen-pos-cb)
+    (send points_msg :header :stamp (ros::time-now))  ;; to sync
     (send pub_xy_msg :header :stamp (ros::time-now))
     (send pub_xy_msg :header :frame_id *camera-frame*)
     (send (send pub_xy_msg :point) :x x)
