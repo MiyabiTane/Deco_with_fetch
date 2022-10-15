@@ -32,7 +32,7 @@
 (setq *dimg-req-msg* (instance deco_with_fetch::DecoImgsRequest :init))
 (setq *wall-pcl* nil)
 (setq *wall-x* nil)
-(setq *torso-z* 20)
+(setq *torso-z* 50)
 (setq *bboxes* '())
 (setq *place-pos-lst* '())
 
@@ -52,4 +52,6 @@
   (think-decoration)
   )
 
-(main)
+;; (make-reset-pose)
+(send *ri* :stop-grasp)
+;; (main)

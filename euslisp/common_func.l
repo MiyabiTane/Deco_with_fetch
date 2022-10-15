@@ -1,5 +1,7 @@
 #!/usr/bin/env roseus
 
+(setq *rotate-thresh* 400)
+
 (defvar *sp-screenpoint-pub-topic* "/screen_point/input/screenpoint")
 (defvar *sp-points-pub-topic* "/screen_point/input/points")
 (defvar *sp-sub-topic* "/pointcloud_screenpoint_nodelet/output_point")
@@ -124,8 +126,8 @@
 
 (defun rotate-ref-wall ()
   (ros::subscribe *plane-norm-sub-topic* geometry_msgs::PoseArray #'plane-norm-cb)
-  (setq vbox_ypos 100)
-  (while (> (abs vbox_ypos) 50)
+  (setq vbox_ypos (+ *rotate-thresh* 50))
+  (while (> (abs vbox_ypos) *rotate-thresh*)
     (setq pose_msg nil)
     (while (not pose_msg)
       (ros::spin-once)

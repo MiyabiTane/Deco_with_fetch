@@ -36,7 +36,7 @@
         args="load jsk_pcl/AttentionClipper $(arg manager)">
     <remap from="~input/points" to="$(arg input_points)" />
     <rosparam>
-      initial_pos: [1.0, 0, 1.1]
+      initial_pos: [1.0, 0, 1.0]
       initial_rot: [0, 0, 0]
       dimension_x: 3.0
       dimension_y: 3.0
@@ -116,6 +116,7 @@
         output="screen" clear_params="true" respawn="true"
         machine="$(arg machine)">
     <remap from="~points" to="/screen_point/input/points" />
+    <!-- remap from="~points" to="$(arg input_points)" / -->
     <remap from="~point" to="/screen_point/input/screenpoint" />
     <rosparam>
       queue_size: 10
