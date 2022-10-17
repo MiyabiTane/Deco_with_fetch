@@ -176,6 +176,7 @@ class ThinkDecoration:
             except:
                 deco_img = cv2.resize(deco_img, dsize=(int(pos_y + h/2.0) - int(pos_y - h/2.0), int(pos_x + w/2.0) - int(pos_x - w/2.0)))
                 mask_img = cv2.resize(mask_img, dsize=(int(pos_y + h/2.0) - int(pos_y - h/2.0), int(pos_x + w/2.0) - int(pos_x - w/2.0)))
+                back_img = cv2.resize(mask_img, dsize=(int(pos_y + h/2.0) - int(pos_y - h/2.0), int(pos_x + w/2.0) - int(pos_x - w/2.0)))
                 deco_img[mask_img < 150] = [0, 0, 0]
                 back_img[mask_img >= 150] = [0, 0, 0]
             comp_img = cv2.add(deco_img, back_img)

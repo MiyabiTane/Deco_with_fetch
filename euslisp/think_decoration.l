@@ -58,6 +58,7 @@
       (setq pos (send (elt box_cd_lst 0) :pos))
       (setq dims (elt box_cd_lst 1))
       (format t "pos: ~A, dims ~A~%" pos dims)
+      (setq *catch-pos-lst* (append *catch-pos-lst* (list pos)))
       (setq pos_msg (instance geometry_msgs::Point :init))
       (setq dims_msg (instance geometry_msgs::Point :init))
       (send pos_msg :x (elt pos 0))
@@ -91,8 +92,8 @@
       (convert-2D->3D x y *wall-pcl*)
       (setq *place-pos-lst* (append *place-pos-lst* (list result_3d_pos))))
     (format t "place_pos_lst: ~A~%" *place-pos-lst*)
-    (send *fetch* :angle-vector fetch_pose)
-    (send-robot 4000)
+    ;; (send *fetch* :angle-vector fetch_pose)
+    ;; (send-robot 4000)
     ))
 
 (defun think-decoration ()

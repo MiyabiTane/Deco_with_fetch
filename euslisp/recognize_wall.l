@@ -14,7 +14,7 @@
     ;; set *wall-x*
     (convert-2D->3D 320 240 *wall-pcl*)
     (format t "center pos: ~A~%" result_3d_pos)
-    (setq wall_x (elt result_3d_pos 0))
+    (setq *wall-x* (elt result_3d_pos 0))
     ))
 
 (defun recognize-wall ()
@@ -26,6 +26,5 @@
     (send *dimg-req-msg* :back_img image_raw_msg)
     (get-backimg-pos)
     ))
-
 
 

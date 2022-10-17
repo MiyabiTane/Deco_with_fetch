@@ -24,7 +24,7 @@
 (defvar *camera-frame* "head_camera_rgb_optical_frame")
 (defvar *base-frame* "base_link")
 (defvar *head-camera-points* "/head_camera/depth_registered/points")
-(defvar *head-camera-img* "/head_camera/rgb/image_raw")
+(setq *head-camera-img* "/head_camera/rgb/image_rect_color")
 
 ;; global variables
 (setq pre_x -1)
@@ -35,23 +35,34 @@
 (setq *torso-z* 50)
 (setq *bboxes* '())
 (setq *place-pos-lst* '())
+(setq *catch-pos-lst* '())
+(setq *close-deco-x* 0)  ;; to go-back default position
 
 ;; load files
 (load "common_func.l")
 (load "recognize_wall.l")
 (load "recognize_decoration.l")
 (load "think_decoration.l")
+(load "catch_balloon.l")
 
-(load "test_push_balloon.l")
+;; (load "test_push_balloon.l")
 
-;; main
-(defun main ()
+(defun main_sim ()
+  (send *ri* :stop-grasp)
+  (setq *head-camera-img* "/head_camera/rgb/image_raw")
   (make-reset-pose)
   (recognize-wall)
   (recognize-decoration)
   (think-decoration)
+  (catch-balloon)
   )
 
-;; (make-reset-pose)
-(send *ri* :stop-grasp)
-;; (main)
+;; main
+(defun main ()
+  (send *ri* :stop-grasp)
+  (make-reset-pose)
+  ;; (recognize-wall)
+  ;; (recognize-decoration)
+  ;; (think-decoration)
+  )
+

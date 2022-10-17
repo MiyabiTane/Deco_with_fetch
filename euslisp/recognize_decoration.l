@@ -15,7 +15,7 @@
       (setq box_z (elt (send box_coords :pos) 2))
       ;; ignore box on the floor
       (if (> box_z 300)
-	  (setq *bboxes* (append *bboxes* (list box_msg)))１
+	  (setq *bboxes* (append *bboxes* (list box_msg)))
 	))
     (when (> (length *bboxes*) 0)
       (if (= (send (send (send (elt *bboxes* 0) :pose) :position) :x) 0)
@@ -115,11 +115,13 @@
     (send-robot 1000)
     (while (= fin_flag 0)
       (go-vel-linear (/ 150 1000.0) 1)
+      (setq *close-deco-x* (+ *close-deco-x* 150))
       (send *fetch* :head :look-at (v- look_at_pos #f(150 0 0)))
       (send-robot 1000)
       (find-boxes)
       (when (or (< (length *bboxes*) deco_count) (< (get-decoration-x) 1000))
 	(go-vel-linear (/ -150 1000.0) 1)
+	(setq *close-deco-x* (- *close-deco-x* 150))
 	(send *fetch* :head :look-at look_at_pos)
 	(send-robot 1000)
 	(ros::duration-sleep 0.5)

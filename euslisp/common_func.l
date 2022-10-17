@@ -1,6 +1,6 @@
 #!/usr/bin/env roseus
 
-(setq *rotate-thresh* 400)
+(setq *rotate-thresh* 100)
 
 (defvar *sp-screenpoint-pub-topic* "/screen_point/input/screenpoint")
 (defvar *sp-points-pub-topic* "/screen_point/input/points")
@@ -158,4 +158,23 @@
 	 (pos (send coords :pos))
 	 (dims (ros::tf-point->pos (send bbox :dimensions))))
     (list coords dims))
+  )
+
+(defun inv-from-reset-pose (target_pos)
+  (send *fetch* :reset-pose)
+  (setq target_coords (make-coords :pos target_pos))
+  (send *fetch* :inverse-kinematics target_coords)
+  (send *fetch* :head :look-at *look-at-pos*)
+  )
+
+(defun get-distance-wall (x y)
+  (let* ((x x) (y y) (wall_x) (wall_pcl))
+    (ros::duration-sleep 1.0)
+    (setq wall_pcl (one-shot-subscribe *head-camera-points*
+				       sensor_msgs::PointCloud2 :after-stamp (ros::time-now)))
+    (convert-2D->3D x y wall_pcl)
+    (convert-2D->3D x y wall_pcl) ;; to get more correct value
+    (setq wall_x (elt result_3d_pos 0))
+    (format t "wall_x: ~A~%" wall_x)
+    wall_x)
   )
