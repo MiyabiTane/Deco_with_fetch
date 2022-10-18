@@ -37,6 +37,7 @@
 (setq *place-pos-lst* '())
 (setq *catch-pos-lst* '())
 (setq *close-deco-x* 0)  ;; to go-back default position
+(setq *center-box-num* 0)
 
 ;; load files
 (load "common_func.l")
@@ -44,6 +45,7 @@
 (load "recognize_decoration.l")
 (load "think_decoration.l")
 (load "catch_balloon.l")
+(load "place_balloon.l")
 
 ;; (load "test_push_balloon.l")
 
@@ -55,6 +57,7 @@
   (recognize-decoration)
   (think-decoration)
   (catch-balloon)
+  (place-balloon)
   )
 
 ;; main

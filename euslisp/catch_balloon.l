@@ -101,9 +101,9 @@
 
 (defun catch-balloon ()
   (let* ((center_num_pos (get-center-box-num))
-	 (center_box_num (elt center_num_pos 0))
 	 (center_box_pos (elt center_num_pos 1)))
-    (before-catch center_box_num center_box_pos)
+    (setq *center-box-num* (elt center_num_pos 0))
+    (before-catch *center_box_num* center_box_pos)
     (catch-balloon-manip 0.2)
     (after-catch)
     ))
