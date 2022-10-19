@@ -5,6 +5,7 @@ import rospy
 import cv2
 import copy
 import glob
+import os
 import roslib.packages
 import numpy as np
 from cv_bridge import CvBridge
@@ -21,16 +22,19 @@ DIR_PATH = roslib.packages.get_pkg_dir('deco_with_fetch') + "/scripts"
 # req.decos_img, req.decos_pos, req.decos_dims, req.decos_rec_uv, req.dimg_rect_pos,
 # req.bimg_lt_pos, req.bimg_rb_pos, req.head_angle, req.look_at_point, req.look_at_uv
 class MakeDecoImgs(object):
-    def __init__(self, decos_img, bimg_lt_pos, bimg_rb_pos, decos_dims, decos_rec_uv):
+    def __init__(self, decos_img, bimg_lt_pos, bimg_rb_pos, decos_dims, decos_rec_uv, called_count):
         bridge = CvBridge()
         decos_img = bridge.imgmsg_to_cv2(decos_img, desired_encoding="bgr8")
-        cv2.imwrite(DIR_PATH + "/images/decos_img.jpg", decos_img)
+        if not os.path.isdir(DIR_PATH + "/images/" + str(called_count)):
+            os.makedirs(DIR_PATH + "/images/" + str(called_count))
+        cv2.imwrite(DIR_PATH + "/images/" + str(called_count) + "/decos_img.jpg", decos_img)
         self.decos_img = decos_img
         self.decos_img = decos_img
         self.bimg_lt_pos = bimg_lt_pos
         self.bimg_rb_pos = bimg_rb_pos
         self.decos_dims = decos_dims
         self.decos_rec_uv = decos_rec_uv
+        self.count = called_count
 
     def reorder_point(self, xs, ys):
         points = []
@@ -82,10 +86,10 @@ class MakeDecoImgs(object):
         cv2.imwrite(save_mask_name, img_white)
 
     def main(self):
-        self.debug_draw_deco_rect(self.decos_img, DIR_PATH + "/images/debug_decos_img.jpg")
+        self.debug_draw_deco_rect(self.decos_img, DIR_PATH + "/images/" + str(self.count) + "/debug_decos_img.jpg")
         for i in range(len(self.decos_dims)):
-            save_name = DIR_PATH + "/images/input" + str(i) + ".jpg"
-            save_mask_name = DIR_PATH + "/images/mask" + str(i) + ".jpg"
+            save_name = DIR_PATH + "/images/" + str(self.count) + "/input" + str(i) + ".jpg"
+            save_mask_name = DIR_PATH + "/images/" +str(self.count) + "/mask" + str(i) + ".jpg"
             self.convert_decoimg(save_name, save_mask_name, self.decos_dims[i], self.decos_rec_uv[i])
 
 def print_decoration_info(decos_img, decos_pos, decos_dims, decos_rec_uv, dimg_rect_pos,
@@ -94,7 +98,7 @@ def print_decoration_info(decos_img, decos_pos, decos_dims, decos_rec_uv, dimg_r
     # other's frame_id -> "base_footprint"
     bridge = CvBridge()
     decos_jpg = bridge.imgmsg_to_cv2(decos_img, desired_encoding="bgr8")
-    cv2.imwrite(DIR_PATH + "/images/decos_img.jpg", decos_jpg)
+    # cv2.imwrite(DIR_PATH + "/images/decos_img.jpg", decos_jpg)
     print("Back Img info->")
     print("lt: ", bimg_lt_pos.x, bimg_lt_pos.y, bimg_lt_pos.z)
     print("rb: ", bimg_rb_pos.x, bimg_rb_pos.y, bimg_rb_pos.z)

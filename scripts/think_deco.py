@@ -14,32 +14,33 @@ TH = 150
 ALPHA = 0
 TEMP_TH = 0.9
 INPUT_NAME = "share/pix2pix_input.jpg"
-OUTPUT_NAME = "share/pix2pix_output.jpg"
+OUTPUT_PATH = "share/pix2pix_output"
 DIR_PATH = roslib.packages.get_pkg_dir('deco_with_fetch') + "/scripts/"
 
 
 # you need to run: deco_with_fetch/scripts$ docker image build -t deco_tensor .
-def think_with_trained_pix2pix(input_img):
+def think_with_trained_pix2pix(input_img, called_count):
     # input_img.shape = (480, 640, 3)
     img = np.full((640, 640, 3), 255)
     img[90: 570] = input_img
     cv2.imwrite(DIR_PATH + INPUT_NAME, img)
     # 学習済みpix2pixによる飾り付け画像生成
+    output_name = OUTPUT_PATH + "_" + str(called_count) + ".jpg"
     subprocess.call(["docker", "run", "--rm", "-it", "--mount", "type=bind,source=" + DIR_PATH + "share,target=/deco_tensor/share",
-                    "deco_tensor", "python3", "trained_pix2pix.py", "--input", INPUT_NAME, "--output", OUTPUT_NAME])
-    output_img = cv2.imread(DIR_PATH + OUTPUT_NAME)
+                    "deco_tensor", "python3", "trained_pix2pix.py", "--input", INPUT_NAME, "--output", output_name])
+    output_img = cv2.imread(DIR_PATH + output_name)
     output_img = cv2.resize(output_img , (640, 640))
     output_img = output_img[90: 570]
     return output_img
 
 
-def remove_dup_deco(back_img, deco_imgs, deco_masks):
+def remove_dup_deco(back_img, called_count):
 
     def visualize(back_img, deco_pos):
         output_back_img = deepcopy(back_img)
         for lx, ly, rx, ry in deco_pos:
             cv2.rectangle(output_back_img, (lx, ly), (rx, ry), (255, 0, 0), thickness=2, lineType=cv2.LINE_4)
-        cv2.imwrite(DIR_PATH + "share/matching_res.jpg", output_back_img)
+        cv2.imwrite(DIR_PATH + "images/" + str(called_count) + "/matching_res.jpg", output_back_img)
 
     def check_dup(d_lx, d_ly, d_rx, d_ry, decorated_pos):
         for lx, ly, rx, ry in decorated_pos:
@@ -51,9 +52,14 @@ def remove_dup_deco(back_img, deco_imgs, deco_masks):
                     return True
         return False
 
-    # 2回目以降の飾り付け生成では既に置いた飾りは使わない
+    # 2回目以降の飾り付け生成では既に飾りがあるところに置かないようにする
+    deco_files = []
+    for i in range(called_count + 1):
+        files = glob.glob(DIR_PATH + "images/" + str(called_count) + "/input*.jpg")
+        deco_files += files
     decorated_pos = []
-    for i, img in enumerate(deco_imgs):
+    for i, fi in enumerate(deco_files):
+        img = cv2.imread(fi)
         res = cv2.matchTemplate(back_img, img, cv2.TM_CCOEFF_NORMED)
         _min_val, max_val, _min_loc, max_loc = cv2.minMaxLoc(res)
         if max_val > TEMP_TH:
@@ -61,14 +67,9 @@ def remove_dup_deco(back_img, deco_imgs, deco_masks):
             lx, ly = max_loc
             rx, ry = lx + W, ly + H
             if not check_dup(lx, ly, rx, ry, decorated_pos):
-                # print("find balloon: ", i)
-                deco_imgs[i] = [[[-1, -1, -1]]]
-                deco_masks[i] = [[-1, -1, -1]]
                 decorated_pos.append((lx, ly, rx, ry))
-    deco_imgs = [img for img in deco_imgs if img[0][0][0] != -1]
-    deco_masks = [img for img in deco_masks if img[0][0] != -1]
     visualize(back_img, decorated_pos)
-    return deco_imgs, deco_masks, decorated_pos
+    return decorated_pos
 
 
 class ThinkDecoration:
@@ -176,11 +177,15 @@ class ThinkDecoration:
             except:
                 deco_img = cv2.resize(deco_img, dsize=(int(pos_y + h/2.0) - int(pos_y - h/2.0), int(pos_x + w/2.0) - int(pos_x - w/2.0)))
                 mask_img = cv2.resize(mask_img, dsize=(int(pos_y + h/2.0) - int(pos_y - h/2.0), int(pos_x + w/2.0) - int(pos_x - w/2.0)))
-                back_img = cv2.resize(mask_img, dsize=(int(pos_y + h/2.0) - int(pos_y - h/2.0), int(pos_x + w/2.0) - int(pos_x - w/2.0)))
+                back_img = cv2.resize(back_img, dsize=(int(pos_y + h/2.0) - int(pos_y - h/2.0), int(pos_x + w/2.0) - int(pos_x - w/2.0)))
                 deco_img[mask_img < 150] = [0, 0, 0]
                 back_img[mask_img >= 150] = [0, 0, 0]
             comp_img = cv2.add(deco_img, back_img)
-            output_img[int(pos_y - h/2.0): int(pos_y + h/2.0), int(pos_x - w/2.0): int(pos_x + w/2.0)] = comp_img
+            try:
+                output_img[int(pos_y - h/2.0): int(pos_y + h/2.0), int(pos_x - w/2.0): int(pos_x + w/2.0)] = comp_img
+            except:
+                comp_h, comp_w, _ = comp_img.shape
+                output_img[int(pos_y - h/2.0): int(pos_y - h/2.0) + comp_h, int(pos_x - w/2.0): int(pos_x - w/2.0) + comp_w] = comp_img
         # cv2.imwrite("output0707.jpg", output_img)
         return output_img
 
