@@ -73,7 +73,7 @@ def remove_dup_deco(back_img, called_count):
 
 
 class ThinkDecoration:
-    def __init__(self, deco_imgs, deco_masks, input_img, output_img, decorated_pos, nums=21, generation=30, elite=2):
+    def __init__(self, deco_imgs, deco_masks, input_img, output_img, decorated_pos, called_count, nums=21, generation=30, elite=2):
         # 複数の飾りが重ならないようにする 0: 空きスペース, 1: 飾りが既にある, 2: 飾りが既にあり、書き換え不可能
         self.visited = np.zeros((480, 640), dtype=np.int)
         for lx, ly, rx, ry in decorated_pos:
@@ -90,7 +90,7 @@ class ThinkDecoration:
         # 貼り付け位置
         self.genes = []
         self.best_gene = (-1 * float('inf'), None)
-        self.debug_count = 0
+        self.called_count = called_count
 
         for _ in range(nums):
             gene = []
@@ -326,7 +326,7 @@ class ThinkDecoration:
         best_gene = self.remove_overlap(best_gene, debug=False)
         print(best_gene)
         output_img = self.generate_img(best_gene)
-        cv2.imwrite(DIR_PATH + "share/ga_output_" + str(self.debug_count) + ".jpg", output_img)
+        cv2.imwrite(DIR_PATH + "share/ga_output_" + str(self.called_count) + ".jpg", output_img)
         return best_gene
 
 

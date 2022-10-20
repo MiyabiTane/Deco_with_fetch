@@ -19,17 +19,20 @@ from cv_bridge import CvBridge
 class ThinkDecorationNode:
     def __init__(self):
         self.dir_path = roslib.packages.get_pkg_dir('deco_with_fetch') + "/scripts"
+        self.bridge = CvBridge()
+        self.called_count = 0
+        self.init_param()
+    
+    def init_param(self):
         self.deco_imgs = []
         self.deco_masks = []
         self.input_img = None
         self.output_img = None
-        self.bridge = CvBridge()
         self.output_arr = [(0, 0, 0, 0)]
-
-        self.called_count = 0
 
     def deco_srv_cb(self, req):
         print("... thinking decoration ...")
+        self.init_param()
         # for debug
         print_decoration_info(req.decos_img, req.decos_pos, req.decos_dims, req.decos_rec_uv, req.dimg_rect_pos,
                                 req.bimg_lt_pos, req.bimg_rb_pos, req.head_angle, req.look_at_point, req.look_at_uv)
@@ -54,8 +57,7 @@ class ThinkDecorationNode:
         # cv2.imwrite(self.dir_path + "/share/output.png", self.output_img)
         # think placement of decorations
         decorated_pos = remove_dup_deco(self.input_img, self.called_count)
-        decorated_pos = []
-        think_deco = ThinkDecoration(self.deco_imgs, self.deco_masks, self.input_img, self.output_img, decorated_pos)
+        think_deco = ThinkDecoration(self.deco_imgs, self.deco_masks, self.input_img, self.output_img, decorated_pos, self.called_count)
         self.output_arr = think_deco.GA_calc()
 
         self.called_count += 1

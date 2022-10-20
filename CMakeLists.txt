@@ -5,6 +5,7 @@ find_package(catkin REQUIRED COMPONENTS std_msgs geometry_msgs sensor_msgs jsk_r
 
 add_service_files(DIRECTORY srv FILES
   DecoImgs.srv
+  DecoStatus.srv
   PointStamped.srv
 )
 

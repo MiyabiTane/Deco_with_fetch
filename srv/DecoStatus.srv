@@ -1,0 +1,6 @@
+std_msgs/Header header
+int64 deco_count
+int64 center_box_num
+sensor_msgs/Image back_img
+---
+geometry_msgs/Point[] real_deco_uv

@@ -161,10 +161,12 @@
   )
 
 (defun inv-from-reset-pose (target_pos)
-  (send *fetch* :reset-pose)
-  (setq target_coords (make-coords :pos target_pos))
-  (send *fetch* :inverse-kinematics target_coords)
-  (send *fetch* :head :look-at *look-at-pos*)
+  (let* ((ik_res))
+    (send *fetch* :reset-pose)
+    (setq target_coords (make-coords :pos target_pos))
+    (setq ik_res (send *fetch* :inverse-kinematics target_coords))
+    (send *fetch* :head :look-at *look-at-pos*)
+    ik_res)
   )
 
 (defun get-distance-wall (x y)
@@ -178,3 +180,9 @@
     (format t "wall_x: ~A~%" wall_x)
     wall_x)
   )
+
+(defun view-debug-pos (pos)
+  (let* ((vbox (make-cube 50 50 50)))
+    (send vbox :locate pos :world)
+    (objects (list *fetch* vbox))
+  ))

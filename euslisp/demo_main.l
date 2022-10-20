@@ -27,17 +27,22 @@
 (setq *head-camera-img* "/head_camera/rgb/image_rect_color")
 
 ;; global variables
-(setq pre_x -1)
 (setq *look-at-pos* #f(500 0 1100))
-(setq *dimg-req-msg* (instance deco_with_fetch::DecoImgsRequest :init))
-(setq *wall-pcl* nil)
-(setq *wall-x* nil)
 (setq *torso-z* 50)
-(setq *bboxes* '())
-(setq *place-pos-lst* '())
-(setq *catch-pos-lst* '())
-(setq *close-deco-x* 0)  ;; to go-back default position
-(setq *center-box-num* 0)
+(setq *deco-loop-num* 0)
+
+(defun init-global-param ()
+  (setq pre_x -1)
+  (setq *dimg-req-msg* (instance deco_with_fetch::DecoImgsRequest :init))
+  (setq *status-req-msg* (instance deco_with_fetch::DecoStatusRequest :init))
+  (setq *wall-pcl* nil)
+  (setq *wall-x* nil)
+  (setq *bboxes* '())
+  (setq *place-pos-lst* '())
+  (setq *catch-pos-lst* '())
+  (setq *close-deco-x* 0)  ;; to go-back default position
+  (setq *center-box-num* 0)
+  )
 
 ;; load files
 (load "common_func.l")
@@ -46,26 +51,30 @@
 (load "think_decoration.l")
 (load "catch_balloon.l")
 (load "place_balloon.l")
+(load "check_decoration.l")
 
 ;; (load "test_push_balloon.l")
 
-(defun main_sim ()
+(defun main-once ()
   (send *ri* :stop-grasp)
-  (setq *head-camera-img* "/head_camera/rgb/image_raw")
   (make-reset-pose)
   (recognize-wall)
   (recognize-decoration)
   (think-decoration)
   (catch-balloon)
   (place-balloon)
+  (check-decoration)
   )
+
+(defun main_sim ()
+  (setq *head-camera-img* "/head_camera/rgb/image_raw")
+  (dotimes (i 2)
+    (init-global-param)
+    (main-once)
+    (setq *deco-loop-num* (+ *deco-loop-num* 1))
+    ))
 
 ;; main
 (defun main ()
-  (send *ri* :stop-grasp)
-  (make-reset-pose)
-  ;; (recognize-wall)
-  ;; (recognize-decoration)
-  ;; (think-decoration)
   )
 

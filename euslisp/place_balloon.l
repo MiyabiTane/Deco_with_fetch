@@ -3,6 +3,9 @@
 (setq *PLACE-POS-OFFSET* #f(1000 -313.6 0))
 (setq *PUSH-X-OFFSET* 400)
 
+(setq *PUSH-TH-1* 0.2)
+(setq *PUSH-TH-2* -10)  ;; 10.0
+
 (defun push-balloon (thresh1 thresh2)
   ;; thresh: diff between ideal and real [mm]
   (let* ((diff_x 0)
@@ -59,7 +62,7 @@
     (format t "rarm_up: ~A~%" rarm_up)
     (send *fetch* :rarm :move-end-pos (float-vector 50 0 rarm_up) :world)
     (send-robot 3000)
-    (push-balloon 0.2 10.0)
+    (push-balloon *PUSH-TH-1* *PUSH-TH-2*)
     (format t "finish push~%")
     (send *ri* :stop-grasp)
     (send *fetch* :rarm :move-end-pos #f(-50 0 0) :world)
@@ -76,7 +79,7 @@
   (send-robot 2000)
   (send *fetch* :rarm :move-end-pos #f(50 0 0) :world)
   (send-robot 2000)
-  (push-balloon 0.2 10.0)
+  (push-balloon *PUSH-TH-1* *PUSH-TH-2*)
   (send *fetch* :rarm :move-end-pos #f(-100 0 0) :world)
   (send-robot 2000)
   (go-vel-linear (* -1 (/ *PUSH-X-OFFSET* 1000.0)) 1)
@@ -89,7 +92,7 @@
 	 (move_rot (atan (/ (elt go_back_pos 1) (elt go_back_pos 0))))
 	 (wall_x))
     (format t "go_back_pos: ~A~%" go_back_pos)
-    (format t "move_len: ~A~%, move_rot: ~A~%" move_len (/ (* 180.0 move_rot) pi))
+    (format t "move_len: ~A, move_rot: ~A~%" move_len (/ (* 180.0 move_rot) pi))
     (go-vel-rotate move_rot)
     (go-vel-linear (/ move_len 1000.0) 2)
     (rotate-ref-wall)

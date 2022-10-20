@@ -139,5 +139,12 @@
 	pkg="deco_with_fetch" type="think_deco_node.py"
 	output="screen" respawn="false">
   </node>
+
+
+  <!-- check decorated status -->
+  <node name="check_deco_status"
+	pkg="deco_with_fetch" type="check_deco_status.py"
+	output="screen" respawn="false">
+  </node>
   
 </launch>
