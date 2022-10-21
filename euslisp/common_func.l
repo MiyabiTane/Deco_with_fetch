@@ -175,6 +175,7 @@
     (setq wall_pcl (one-shot-subscribe *head-camera-points*
 				       sensor_msgs::PointCloud2 :after-stamp (ros::time-now)))
     (convert-2D->3D x y wall_pcl)
+    (convert-2D->3D x y wall_pcl)
     (convert-2D->3D x y wall_pcl) ;; to get more correct value
     (setq wall_x (elt result_3d_pos 0))
     (format t "wall_x: ~A~%" wall_x)

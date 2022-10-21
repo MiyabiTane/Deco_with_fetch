@@ -41,7 +41,8 @@
   (setq *place-pos-lst* '())
   (setq *catch-pos-lst* '())
   (setq *close-deco-x* 0)  ;; to go-back default position
-  (setq *center-box-num* 0)
+  (setq *rotate-rad* 0)
+  (setq *catch-box-num* 0)
   )
 
 ;; load files
@@ -53,7 +54,7 @@
 (load "place_balloon.l")
 (load "check_decoration.l")
 
-;; (load "test_push_balloon.l")
+(load "test_manip_balloon.l")
 
 (defun main-once ()
   (send *ri* :stop-grasp)
@@ -77,4 +78,3 @@
 ;; main
 (defun main ()
   )
-

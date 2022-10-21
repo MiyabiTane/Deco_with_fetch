@@ -8,10 +8,10 @@
 			      sensor_msgs::Image :after-stamp (ros::time-now)))
 	 (result_msg))
     (send *status-req-msg* :back_img image_raw_msg)
-    (format t "deco-loop-num ~A, center-box-num ~A~%"
-	    *deco-loop-num* *center-box-num*)
+    (format t "deco-loop-num ~A, catch-box-num ~A~%"
+	    *deco-loop-num* *catch-box-num*)
     (send *status-req-msg* :deco_count *deco-loop-num*)
-    (send *status-req-msg* :center_box_num *center-box-num*)
+    (send *status-req-msg* :box_num *catch-box-num*)
     (format t "wating service ...~%")
     (ros::wait-for-service *status-req-topic*)
     (setq result_msg (ros::service-call *status-req-topic* *status-req-msg*))
@@ -47,7 +47,7 @@
 	  (format t "飾り付けに失敗しました~%"))
       (progn
 	(dotimes (i (length *place-pos-lst*))
-	  (when (not (= i *center-box-num*))
+	  (when (not (= i *catch-box-num*))
 	    (when (not (= (send (elt result_lst i) :x) -1))
 	      (setq ideal_pos (elt *place-pos-lst* i))
 	      (convert-2D->3D (send (elt result_lst i) :x) (send (elt result_lst i) :y) *wall-pcl*) 
@@ -72,7 +72,7 @@
 
 (defun check-decoration-test ()
   (setq *place-pos-lst* (list #f(1906.57 344.389 1381.54) #f(2010.0 -728.395 766.317) #f(1895.04 464.742 481.844)))
-  (setq *center-box-num* 1)
+  (setq *catch-box-num* 1)
   (setq *wall-pcl*
 	(one-shot-subscribe *head-camera-points*
 			    sensor_msgs::PointCloud2 :after-stamp (ros::time-now)))

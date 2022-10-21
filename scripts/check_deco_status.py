@@ -53,7 +53,7 @@ class CheckDecoStatus:
         real_back_img = self.bridge.imgmsg_to_cv2(req.back_img, desired_encoding="bgr8")
         # ga_back_img = cv2.imread(self.share_dir_path + "ga_output_status.jpg")
         # real_back_img = cv2.imread(self.share_dir_path + "result_0.jpg")
-        deco_img = cv2.imread(self.images_dir_path + str(req.deco_count) + "/input" + str(req.center_box_num) + ".jpg")
+        deco_img = cv2.imread(self.images_dir_path + str(req.deco_count) + "/input" + str(req.box_num) + ".jpg")
         ga_x, ga_y, res_x, res_y = -1, -1, -1, -1
         while -1 in [ga_x, ga_y, res_x, res_y] and thresh >= NOT_FOUND_TH:
             thresh -= 0.1
