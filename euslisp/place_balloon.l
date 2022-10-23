@@ -43,7 +43,7 @@
     (go-vel-linear (/ move_len 1000.0) 2)
     (setq arm_end_pos (get-arm-end-pos))
     (send *fetch* :head :look-at  ;; for rotate-ref-wall
-	  (v+ *look-at-pos* (float-vector 0 (+ (elt arm_end_pos 1) 100) 0)))
+	  (v+ *look-at-pos* (float-vector 0 (+ (elt arm_end_pos 1) 200) 0)))
     (send-robot 1000)
     (ros::duration-sleep 0.5)
     (rotate-ref-wall)
@@ -65,7 +65,7 @@
     (push-balloon *PUSH-TH-1* *PUSH-TH-2*)
     (format t "finish push~%")
     (send *ri* :stop-grasp)
-    (send *fetch* :rarm :move-end-pos #f(-50 0 0) :world)
+    (send *fetch* :rarm :move-end-pos #f(-20 0 0) :world)
     (send-robot 2000)
     (send *fetch* :rarm :move-end-pos #f(0 0 -150) :world)
     (send-robot 2000)
@@ -75,7 +75,7 @@
   )
 
 (defun repush-balloon ()
-  (send *fetch* :rarm :move-end-pos #f(0 0 150) :world)
+  (send *fetch* :rarm :move-end-pos #f(0 0 200) :world)
   (send-robot 2000)
   (send *fetch* :rarm :move-end-pos #f(50 0 0) :world)
   (send-robot 2000)

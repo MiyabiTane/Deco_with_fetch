@@ -3,13 +3,13 @@
 (defun set-param-real ()
   (setq *CATCH-X-OFFSET* 200)
   (setq *CATCH-Z-OFFSET* 50)
-  (setq *CATCH-BALLOON-TH* 0.2)  ;; 指の開き具合のずれ
+  (setq *CATCH-BALLOON-TH* 0.05)  ;; 指の開き具合のずれ
 
   (setq *PLACE-POS-OFFSET* #f(1000 -313.6 0))
   (setq *PUSH-X-OFFSET* 0)  ;;400)  ;; 押す前に壁に近づく距離
   
   (setq *PUSH-TH-1* 0.2)  ;; 腕の位置のずれ
-  (setq *PUSH-TH-2* -10)  ;; 5.0)  ;; 壁との距離
+  (setq *PUSH-TH-2* 3.0)  ;; 5.0)  ;; 壁との距離
   )
 
 (defun set-catch-pos-lst ()
@@ -75,6 +75,7 @@
 
   (setq place_pos (place-balloon-manip place_pos))
   (repush-balloon)
-  (go-back place_pos)
+  ;; (go-back place_pos)
+  (go-vel-linear (/ -100 1000.0) 1)
   )
 

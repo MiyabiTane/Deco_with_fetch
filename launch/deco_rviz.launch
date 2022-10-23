@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="rviz" name="fetch_rviz" type="rviz"
+        args="-d $(find deco_with_fetch)/config/deco.rviz" />
+</launch>

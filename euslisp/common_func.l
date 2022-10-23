@@ -1,6 +1,7 @@
 #!/usr/bin/env roseus
 
-(setq *rotate-thresh* 100)
+(setq *rotate-thresh* 200)
+(setq *rotate-rad* (/ pi 8))
 
 (defvar *sp-screenpoint-pub-topic* "/screen_point/input/screenpoint")
 (defvar *sp-points-pub-topic* "/screen_point/input/points")
@@ -23,9 +24,10 @@
   )
 
 (defun go-vel-rotate (move_rad)  ;; move_rad[rad] move_time[s]
-  (if (< move_rad 0)
-      (send *ri* :go-velocity 0 0 (- move_rad 0.15))
-    (send *ri* :go-velocity 0 0 move_rad))
+  ;; (if (< move_rad 0)
+  ;;    (send *ri* :go-velocity 0 0 (- move_rad 0.15))
+  (send *ri* :go-velocity 0 0 move_rad)
+  ;;)
   (send *ri* :wait-interpolation)
   )
 
@@ -120,8 +122,8 @@
 (defun rotate-ref-box ()
   (setq vbox_ypos (elt (get-plane-norm-vec (elt norm_rpy_lst 0)) 1))
   (if (> vbox_ypos 0)
-      (go-vel-rotate (/ pi 10))
-    (go-vel-rotate (* -1 (/ pi 10))))
+      (go-vel-rotate *rotate-rad*)
+    (go-vel-rotate (* -1 *rotate-rad*)))
   )
 
 (defun rotate-ref-wall ()
