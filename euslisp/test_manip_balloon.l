@@ -1,7 +1,7 @@
 #!/usr/bin/env roseus
 
 (defun set-param-real ()
-  (setq *CATCH-X-OFFSET* 200)
+  (setq *CATCH-X-OFFSET* 0)
   (setq *CATCH-Z-OFFSET* 50)
   (setq *CATCH-BALLOON-TH* 0.05)  ;; 指の開き具合のずれ
 
@@ -38,22 +38,25 @@
   )
 
 (defun recog-and-catch-real ()
-  (let* ((close_deco_vec))
-    (set-param-real)
-    (init-global-param)
-    (make-reset-pose)
-    (send *ri* :stop-grasp)
-    
-    (find-decoration (v- *look-at-pos* #f(0 0 100)) 5)
-    (close-decoration)
-    (set-catch-pos-lst)
-    
-    (setq cbox_num_pos (get-closest-box))
-    (setq close_deco_vec (before-catch (elt cbox_num_pos 0) (elt cbox_num_pos 1)))
-    (catch-balloon-manip *CATCH-BALLOON-TH*)
-    (go-vel-linear (/ -500 1000.0) 1)
-    (before-push-pose)
-    ))
+  (set-param-real)
+  (init-global-param)
+  (make-reset-pose)
+  (send *ri* :stop-grasp)
+
+  (rotate-ref-wall)
+  (setq *wall-x* (get-distance-wall 320 240))
+
+  (find-decoration (v- *look-at-pos* #f(0 0 100)) 5)
+  (close-decoration)
+  (set-catch-pos-lst)
+
+  (setq cbox_num_pos (get-closest-box))
+  (setq close_len_rot (before-catch (elt cbox_num_pos 0) (elt cbox_num_pos 1)))
+  (catch-balloon-manip *CATCH-BALLOON-TH*)
+  (after-catch (elt close_len_rot 0) (elt close_len_rot 1))
+  ;; (go-vel-linear (/ -500 1000.0) 1)
+  ;; (before-push-pose)
+  ))
 
 (defun place-balloon-real ()
   (set-param-real)

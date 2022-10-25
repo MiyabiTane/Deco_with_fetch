@@ -80,9 +80,9 @@
   (send *fetch* :rarm :move-end-pos #f(50 0 0) :world)
   (send-robot 2000)
   (push-balloon *PUSH-TH-1* *PUSH-TH-2*)
-  (send *fetch* :rarm :move-end-pos #f(-100 0 0) :world)
+  (send *fetch* :rarm :move-end-pos #f(-50 0 0) :world)
   (send-robot 2000)
-  (go-vel-linear (* -1 (/ *PUSH-X-OFFSET* 1000.0)) 1)
+  (go-vel-linear (* -1 (/ (+ *PUSH-X-OFFSET* 100) 1000.0)) 1)
   (make-reset-pose)
   )
 

@@ -81,16 +81,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        bl_caster_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        br_caster_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         elbow_flex_link:
           Alpha: 1
           Show Axes: false
@@ -101,17 +91,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        fl_caster_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         forearm_roll_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        fr_caster_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -141,6 +121,15 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        head_l515_mount_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        head_l515_virtual_mount_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         head_pan_link:
           Alpha: 1
           Show Axes: false
@@ -151,11 +140,23 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        insta360_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        l515_head_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         l_gripper_finger_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        l_gripper_finger_tip:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         l_wheel_link:
           Alpha: 1
           Show Axes: false
@@ -171,6 +172,10 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        r_gripper_finger_tip:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         r_wheel_link:
           Alpha: 1
           Show Axes: false
@@ -186,6 +191,15 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        side_hook_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        side_hook_top:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         torso_fixed_link:
           Alpha: 1
           Show Axes: false
@@ -585,11 +599,11 @@ Visualization Manager:
       Use rainbow: true
       Value: true
     - Class: jsk_rviz_plugin/BoundingBoxArray
-      Enabled: true
+      Enabled: false
       Name: BoundingBoxArray
       Topic: /attention_clipper/output/box_array
       Unreliable: false
-      Value: true
+      Value: false
       alpha: 0.800000011920929
       color: 25; 255; 0
       coloring: Auto
@@ -650,16 +664,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 6.524543285369873
+      Distance: 4.079614639282227
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.5603723526000977
-        Y: -0.37793436646461487
-        Z: 0.9600509405136108
+        X: 0.25337010622024536
+        Y: -0.09885476529598236
+        Z: 1.1190283298492432
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
