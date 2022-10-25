@@ -12,7 +12,7 @@ from deco_with_fetch.srv import DecoStatus, DecoStatusResponse
 
 from cv_bridge import CvBridge
 
-NOT_FOUND_TH = 0.25
+NOT_FOUND_TH = 0.5
 
 
 class CheckDecoStatus:

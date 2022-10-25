@@ -130,7 +130,7 @@
       (send *fetch* :head :look-at (v- look_at_pos #f(100 0 0)))
       (send-robot 1000)
       (find-boxes)
-      (when (or (< (length *bboxes*) deco_count) (< (get-decoration-x) 700))
+      (when (or (< (length *bboxes*) deco_count) (< (get-decoration-x) 800))
 	(go-vel-linear (/ -100 1000.0) 1)
 	(setq *close-deco-x* (- *close-deco-x* 100))
 	(send *fetch* :head :look-at look_at_pos)

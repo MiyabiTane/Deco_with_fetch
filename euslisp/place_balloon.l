@@ -1,6 +1,6 @@
 #!/usr/bin/env roseus
 
-(setq *PLACE-POS-OFFSET* #f(1000 -313.6 0))
+(setq *PLACE-POS-OFFSET* #f(1000 -200.6 0))  ;; #f(1000 -313.6 0))
 (setq *PUSH-X-OFFSET* 400)
 
 (setq *PUSH-TH-1* 0.2)
@@ -41,6 +41,7 @@
     (format t "move_rot: ~A, move_len: ~A~%" (/ (* 180.0 move_rot) pi) move_len)
     (go-vel-rotate move_rot)
     (go-vel-linear (/ move_len 1000.0) 2)
+    (go-vel-rotate (* -1 move_rot))
     (setq arm_end_pos (get-arm-end-pos))
     (send *fetch* :head :look-at  ;; for rotate-ref-wall
 	  (v+ *look-at-pos* (float-vector 0 (+ (elt arm_end_pos 1) 200) 0)))
@@ -71,7 +72,7 @@
     (send-robot 2000)
     (send *fetch* :rarm :move-end-pos #f(-150 0 0) :world)
     (send-robot 2000)
-    place_pos)
+    (list move_len move_rot))
   )
 
 (defun repush-balloon ()
@@ -82,18 +83,20 @@
   (push-balloon *PUSH-TH-1* *PUSH-TH-2*)
   (send *fetch* :rarm :move-end-pos #f(-50 0 0) :world)
   (send-robot 2000)
-  (go-vel-linear (* -1 (/ (+ *PUSH-X-OFFSET* 100) 1000.0)) 1)
-  (make-reset-pose)
   )
 
-(defun go-back (place_pos)
-  (let* ((place_pos (float-vector (elt place_pos 0) (elt place_pos 1) 0))
-	 (move_len (* -1 (norm place_pos)))
-	 (move_rot (* -1 (atan (/ (elt place_pos 1) (elt place_pos 0)))))
+(defun go-back (move_len move_rot)
+  (let* ((move_len (* -1 move_len))
+	 (move_rot move_rot)
 	 (wall_x))
+    (send *fetch* :head :look-at *look-at-pos*)
+    (send-robot 1000)
+    (rotate-ref-wall)
+    (go-vel-linear (/ (* -1 *PUSH-X-OFFSET*) 1000.0) 1)
     (format t "move_len: ~A, move_rot: ~A~%" move_len (/ (* 180.0 move_rot) pi))
     (go-vel-rotate move_rot)
     (go-vel-linear (/ move_len 1000.0) 2)
+    (make-reset-pose)
     (rotate-ref-wall)
     (setq wall_x (get-distance-wall 320 240))
     (format t "wall_x: ~A, *wall-x*: ~A~%" wall_x *wall-x*)
@@ -101,10 +104,11 @@
     ))
 
 (defun place-balloon ()
-  (let* ((place_pos (elt *place-pos-lst* *catch-box-num*)))
-    (setq place_pos (place-balloon-manip place_pos))
+  (let* ((place_pos (elt *place-pos-lst* *catch-box-num*))
+	 (close_len_rot))
+    (setq close_len_rot (place-balloon-manip place_pos))
     (repush-balloon)
-    (go-back place_pos)
+    (go-back (elt close_len_rot 0) (elt close_len_rot 1))
     ))
 
 (defun place-balloon-test ()

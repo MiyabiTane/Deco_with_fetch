@@ -69,11 +69,20 @@
 
 (defun main_sim ()
   (setq *head-camera-img* "/head_camera/rgb/image_raw")
+
+  (defun go-vel-rotate (move_rad)  ;; move_rad[rad] move_time[s]
+    (if (< move_rad 0)
+	(send *ri* :go-velocity 0 0 (- move_rad 0.18))
+      (send *ri* :go-velocity 0 0 move_rad)
+      )
+    (send *ri* :wait-interpolation)
+    )
+
   (dotimes (i 2)
     (init-global-param)
     (main-once)
-    (setq *deco-loop-num* (+ *deco-loop-num* 1))
-    ))
+    (setq *deco-loop-num* (+ *deco-loop-num* 1)))
+  )
 
 ;; main
 (defun main ()

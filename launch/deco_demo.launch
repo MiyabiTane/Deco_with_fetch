@@ -49,7 +49,7 @@
         pkg="nodelet" type="nodelet" respawn="true"
         args="load jsk_pcl/ExtractIndices $(arg manager)">
     <remap from="~input" to="$(arg input_points)" />
-    <remap from="~indices" to="attention_clipper/output/point_indices" />
+    <remap from="~indices" to="attention_clipper_wall/output/point_indices" />
     <rosparam>
       keep_organized: true
     </rosparam>
