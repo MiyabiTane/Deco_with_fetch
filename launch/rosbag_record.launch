@@ -39,6 +39,8 @@
           /server_name/smach/container_status
           /server_name/smach/container_structure
           /audio
+          /dialog_response
+          /eyebrows_expression/input
           $(arg other_topics)
           $(arg regex_flag)
           $(arg other_options)"

@@ -146,5 +146,36 @@
 	pkg="deco_with_fetch" type="check_deco_status.py"
 	output="screen" respawn="false">
   </node>
+
+
+  <!-- chat and eyebrows expression -->
+  <arg name="apikey_path" default="$(find deco_with_fetch)/json/apikey.json" />
+  <node name="chat_node"
+	pkg="deco_with_fetch" type="chat_node.py"
+	output="screen" respawn="false">
+    <rosparam subst_value="true">
+      apikey_path: $(arg apikey_path)
+    </rosparam>
+  </node>
+
+  <!-- /text -> /dialog_response -->
+  <arg name="google_cloud_credentials_json" default="$(find deco_with_fetch)/json/facialexpressionoriginal-cphs-377bf1229657.json" />
+  <arg name="project_id" default="facialexpressionoriginal-cphs" />
+  <include file="$(find dialogflow_task_executive)/launch/dialogflow_task_executive.launch" >
+    <arg name="credential" value="$(arg google_cloud_credentials_json)" />
+    <arg name="project_id" value="$(arg project_id)" />
+    <arg name="run_app_manager" value="true" />
+    <arg name="enable_hotword" default="false" />
+  </include>
+
+  <node name="eyebrows_topic_relay"
+	pkg="deco_with_fetch" type="eyebrows_topic_relay.py"
+	output="screen" respawn="false">
+  </node>
+
+  <node name="eyebrows_expression"
+	pkg="deco_with_fetch" type="eyebrows_expression.py"
+	output="screen" respawn="false">
+  </node>
   
 </launch>
