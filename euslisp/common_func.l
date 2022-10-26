@@ -103,6 +103,17 @@
 	))
     ))
 
+(defun select-wall-norm ()  ;; return norm_rpy of wall
+  (let* ((center_y 10000) (pos) (abs_y) (wall_num 0))
+    (dotimes (i (length norm_coords_lst))
+      (setq pos (send (elt norm_coords_lst i) :pos))
+      (setq abs_y (abs (elt pos 1)))
+      (when (< abs_y center_y)
+	(setq center_y abs_y)
+	(setq wall_num i)))
+    (elt norm_rpy_lst wall_num))
+  )
+
 (defun get-plane-norm-vec (norm_rpy)
   (let* ((base_box (make-cube 50 50 50))
 	 (virtual_box (make-cube 50 50 50))
@@ -117,11 +128,13 @@
   )
 
 (defun rotate-ref-box ()
-  (setq vbox_ypos (elt (get-plane-norm-vec (elt norm_rpy_lst 0)) 1))
-  (if (> vbox_ypos 0)
-      (go-vel-rotate *wall-rotate-rad*)
-    (go-vel-rotate (* -1 *wall-rotate-rad*)))
-  )
+  (let* ((wall_norm_rpy (elt norm_rpy_lst 0)))
+    (setq wall_norm_rpy (select-wall-norm))
+    (setq vbox_ypos (elt (get-plane-norm-vec wall_norm_rpy) 1))
+    (if (> vbox_ypos 0)
+	(go-vel-rotate *wall-rotate-rad*)
+      (go-vel-rotate (* -1 *wall-rotate-rad*)))
+    ))
 
 (defun rotate-ref-wall ()
   (ros::subscribe *plane-norm-sub-topic* geometry_msgs::PoseArray #'plane-norm-cb)
