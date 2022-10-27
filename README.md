@@ -83,6 +83,34 @@ catkin build deco_with_fetch
 
 [apikey.json](https://drive.google.com/file/d/1tAT_WQqCMqvtbM0-CSTomWjwMP4jcOi9/view)をダウンロードし、`deco_with_fetch/json`下に置く
 
+**構文解析を使うための環境構築**<br>
+[ros_google_cloud_languageフォルダ](https://github.com/k-okada/jsk_3rdparty/tree/google_nlp/ros_google_cloud_language)を頑張ってダウンロードし（いつかmasterにマージされるかもしれない）、`catkin_ws/src`下に置く。
+
+以下の手順でファイルを置き換え
+```
+source catkin_ws/devel/setup.bash
+roscd deco_with_fetch
+mv gcl_changes/msg catkin_ws/src/ros_google_cloud_language/msg
+mv gcl_changes/node_scripts catkin_ws/src/ros_google_cloud_language/node_scripts
+```
+
+`ros_google_cloud_language/CMakeLists.txt`に`TextSyntax.msg`を追加する
+```
+add_message_files(
+  FILES
+  TextEntity.msg
+  TextSyntax.msg
+)
+```
+
+```
+cd catkin_ws/src
+catkin build ros_google_cloud_language
+source catkin_ws/devel/setup.bash
+```
+
+[eternal-byte-236613-4bc6962824d1.json](https://drive.google.com/file/d/1VxniytpH9J12ii9jphtBylydY1_k5nXf/view)をダウンロードし、`deco_with_fetch/json`下に置く
+
 
 ### 実行方法
 ```

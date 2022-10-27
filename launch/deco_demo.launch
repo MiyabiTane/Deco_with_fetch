@@ -177,5 +177,13 @@
 	pkg="deco_with_fetch" type="eyebrows_expression.py"
 	output="screen" respawn="false">
   </node>
-  
+
+
+  <!--  syntactic analysis of texts -->
+  <arg name="google_nlp_json" default="$(find deco_with_fetch)/json/eternal-byte-236613-4bc6962824d1.json" />
+  <include file="$(find ros_google_cloud_language)/launch/analyze_text.launch" >
+    <arg name="google_cloud_credentials_json" value="$(arg google_nlp_json)" />
+  </include>
+
+
 </launch>

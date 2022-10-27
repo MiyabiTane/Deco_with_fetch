@@ -20,6 +20,7 @@
 (ros::load-ros-package "std_msgs")
 (ros::load-ros-package "jsk_recognition_msgs")
 (ros::load-ros-package "deco_with_fetch")
+(ros::load-ros-package "topic_tools")
 
 (defvar *camera-frame* "head_camera_rgb_optical_frame")
 (defvar *base-frame* "base_link")
@@ -27,6 +28,7 @@
 (setq *head-camera-img* "/head_camera/rgb/image_rect_color")
 
 ;; global variables
+(setq *prev-mux-topic* "/speech_to_text_google")
 (setq *look-at-pos* #f(500 0 1100))
 (setq *torso-z* 50)
 (setq *deco-loop-num* 0)
@@ -56,6 +58,24 @@
 
 (load "test_manip_balloon.l")
 
+(defun stop-default-mux ()
+  (let* ((mux_req_msg (instance topic_tools::MuxSelectRequest :init)))
+    (send mux_req_msg :topic "/speech_to_text_julius")
+    (ros::wait-for-service "/speech_to_text_mux/select")
+    (setq *prev-mux-topic*
+	  (send (ros::service-call "/speech_to_text_mux/select" mux_req_msg) :prev_topic))
+    (format t "change from ~A to /speech_to_text_julius~%" *prev-mux-topic*)
+    ))
+
+(defun set-default-mux ()
+  (let* ((mux_req_msg (instance topic_tools::MuxSelectRequest :init))
+	 (prev_topic))
+    (send mux_req_msg :topic *prev-mux-topic*)
+    (ros::wait-for-service "/speech_to_text_mux/select")
+    (ros::service-call "/speech_to_text_mux/select" mux_req_msg)
+    (format t "change to ~A~%" *prev-mux-topic*)
+    ))
+
 (defun main-once ()
   (send *ri* :stop-grasp)
   (make-reset-pose)
@@ -67,7 +87,7 @@
   (check-decoration)
   )
 
-(defun main_sim ()
+(defun main-sim ()
   (setq *head-camera-img* "/head_camera/rgb/image_raw")
 
   (defun go-vel-rotate (move_rad)  ;; move_rad[rad] move_time[s]
