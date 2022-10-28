@@ -76,8 +76,10 @@ class ROSGoogleCloudLanguage(object):
                 # print("{} {} {}".format(token.part_of_speech.tag, token.text.content.encode('utf-8'), token.dependency_edge.head_token_index)
                 result.syntaxes.append(TextSyntax(
                     name=token.text.content.encode('utf-8'),
+                    lemma=token.lemma.encode('utf-8'),
                     dependency_edge=token.dependency_edge.head_token_index,
-                    part_of_speech=token.part_of_speech.tag
+                    part_of_speech=token.part_of_speech.tag,
+                    parse_label=token.dependency_edge.label
                 ))
 
         except Exception as e:

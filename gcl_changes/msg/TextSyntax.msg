@@ -1,5 +1,6 @@
 string name
 int32 dependency_edge
+string lemma
 
 int32 part_of_speech
 # https://cloud.google.com/natural-language/docs/reference/rest/v1/Token#Tag
@@ -18,4 +19,6 @@ int32 part_of_speech
 # 12: X
 # 13: AFFIX
 
+# https://cloud.google.com/natural-language/docs/reference/rest/v1beta2/Token#DependencyEdge
+int32 parse_label
 
