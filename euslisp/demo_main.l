@@ -21,6 +21,7 @@
 (ros::load-ros-package "jsk_recognition_msgs")
 (ros::load-ros-package "deco_with_fetch")
 (ros::load-ros-package "topic_tools")
+(ros::load-ros-package "speech_recognition_msgs")
 
 (defvar *camera-frame* "head_camera_rgb_optical_frame")
 (defvar *base-frame* "base_link")
@@ -87,9 +88,8 @@
   (check-decoration)
   )
 
-(defun main-sim ()
+(defun set-sim ()
   (setq *head-camera-img* "/head_camera/rgb/image_raw")
-
   (defun go-vel-rotate (move_rad)  ;; move_rad[rad] move_time[s]
     (if (< move_rad 0)
 	(send *ri* :go-velocity 0 0 (- move_rad 0.18))
@@ -97,13 +97,18 @@
       )
     (send *ri* :wait-interpolation)
     )
-
-  (dotimes (i 2)
-    (init-global-param)
-    (main-once)
-    (setq *deco-loop-num* (+ *deco-loop-num* 1)))
   )
 
-;; main
-(defun main ()
-  )
+(defun main (loop_num)
+  (let* ((loop_num loop_num))
+    (dotimes (i loop_num)
+      (init-global-param)
+      (main-once)
+      (setq *deco-loop-num* (+ *deco-loop-num* 1)))
+  ))
+
+(defun main-sim (loop_num)
+  (let* ((loop_num loop_num))
+    (set-sim)
+    (main loop_num)
+    ))

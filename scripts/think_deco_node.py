@@ -4,6 +4,7 @@ import rospy
 import glob
 import roslib.packages
 import cv2
+import os
 
 from think_deco import ThinkDecoration, think_with_trained_pix2pix, remove_dup_deco
 from make_deco_imgs import MakeDecoImgs, print_decoration_info
@@ -37,6 +38,8 @@ class ThinkDecorationNode:
         print_decoration_info(req.decos_img, req.decos_pos, req.decos_dims, req.decos_rec_uv, req.dimg_rect_pos,
                                 req.bimg_lt_pos, req.bimg_rb_pos, req.head_angle, req.look_at_point, req.look_at_uv)
         self.input_img = self.bridge.imgmsg_to_cv2(req.back_img, desired_encoding="bgr8")
+        if not os.path.isdir(self.dir_path + "/images/" + str(self.called_count)):
+            os.makedirs(self.dir_path + "/images/" + str(self.called_count))
         cv2.imwrite(self.dir_path + "/images/" + str(self.called_count) + "/back_img.jpg", self.input_img)
         make_deco_imgs = MakeDecoImgs(req.decos_img, req.bimg_lt_pos, req.bimg_rb_pos, req.decos_dims, req.decos_rec_uv, self.called_count)
         make_deco_imgs.main()

@@ -1,8 +1,6 @@
 #!/usr/bin/env roseus
 
 (defun set-param-real ()
-  (setq *CATCH-X-OFFSET* 50)
-  (setq *CATCH-Z-OFFSET* 50)
   (setq *CATCH-BALLOON-TH* 0.05)  ;; 指の開き具合のずれ
 
   (setq *PLACE-POS-OFFSET* #f(1000 -200.6 0))
@@ -39,15 +37,11 @@
 
 (defun recog-and-catch-real ()
 
-  (defun after-catch (move_len move_rot)
+  (defun after-catch ()
     (let* ((wall_x) (rot_num)
-	   (move_len (* -1 move_len))
-	   (move_rot (* -1 move_rot))
 	   (leave_x (* -1 *close-deco-x*)))
-      (format t "go-vel-linear ~A~%" move_len)
-      (go-vel-linear (/ move_len 1000.0) 1)
-      (format t "go-vel-rotate ~A~%" (* 180 (/ move_rot pi)))
-      (go-vel-rotate move_rot)
+      (set-before-catch-pose)
+      (send-robot 4000)
       (before-push-pose)
       (format t "leave_x: ~A~%" leave_x)
       (go-vel-linear (/ leave_x 1000.0) 1)
@@ -63,19 +57,14 @@
   (make-reset-pose)
   (send *ri* :stop-grasp)
 
-  ;; (rotate-ref-wall)
-  ;; (setq *wall-x* (get-distance-wall 320 240))
-
-  (find-decoration (v- *look-at-pos* #f(0 0 100)) 0)
+  (find-decoration (v- *look-at-pos* #f(0 0 100)) 5)
   (close-decoration)
   (set-catch-pos-lst)
 
   (setq cbox_num_pos (get-closest-box))
-  (setq close_len_rot (before-catch (elt cbox_num_pos 0) (elt cbox_num_pos 1)))
+  (before-catch (elt cbox_num_pos 1))
   (catch-balloon-manip *CATCH-BALLOON-TH* 0)
-  (after-catch (elt close_len_rot 0) (elt close_len_rot 1))
-  ;; (go-vel-linear (/ -500 1000.0) 1)
-  ;; (before-push-pose)
+  (after-catch)
   ))
 
 (defun place-balloon-real ()
