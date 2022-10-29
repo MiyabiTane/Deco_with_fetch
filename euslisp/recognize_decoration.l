@@ -123,7 +123,7 @@
 	 (look_at_pos (get-center-box-pos)))
     (send *fetch* :torso :waist-z :joint-angle 385)
     (send *fetch* :head :look-at look_at_pos)
-    (send-robot 1000)
+    (send-robot 4000)
     (while (= fin_flag 0)
       (go-vel-linear (/ 100 1000.0) 1)
       (setq *close-deco-x* (+ *close-deco-x* 100))

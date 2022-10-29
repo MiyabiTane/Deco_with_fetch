@@ -1,0 +1,151 @@
+<launch>
+  <arg name="gazebo" default="false" />
+  <arg name="run_rviz" default="false" />
+  <arg name="input_points" default="/head_camera/depth_registered/points" />
+  <arg name="camera_info" default="/head_camera/rgb/camera_info" />
+  <arg name="sensor_frame" default="/head_camera_rgb_optical_frame" />
+  <arg name="launch_tracking" default="false" />
+  <arg name="publish_objects_tf" default="true" />
+  <arg name="manager" default="deco_nodelet_manager" />
+  <arg name="machine" value="localhost" />
+
+  <group if="$(arg gazebo)">
+    <include file="$(find deco_with_fetch)/launch/gazebo/deco_scene.launch">
+    </include>
+    <!-- Spawn models into gazebo -->
+    <node name="spawn_demo_cube_yellow" pkg="gazebo_ros" type="spawn_model"
+          args="-file $(find deco_with_fetch)/models/demo_cube_yellow/model.sdf -sdf
+                -x -1.3 -y 0.0 -z 0.65 -model demo_cube_yellow" />
+    <node name="spawn_demo_cube_red" pkg="gazebo_ros" type="spawn_model"
+          args="-file $(find deco_with_fetch)/models/demo_cube_red/model.sdf -sdf
+                -x -1.3 -y 0.5 -z 0.65 -model demo_cube_red" />
+    <node name="spawn_demo_cube_green" pkg="gazebo_ros" type="spawn_model"
+          args="-file $(find deco_with_fetch)/models/demo_cube_green/model.sdf -sdf
+                -x -1.3 -y -0.5 -z 0.65 -model demo_cube_green" />
+  </group>
+
+  <group if="$(arg run_rviz)">
+    <node pkg="rviz" name="fetch_rviz" type="rviz"
+          args="-d $(find deco_with_fetch)/config/deco.rviz" />
+  </group>
+
+
+  <!-- calculate normal vector of wall -->
+  <node name="attention_clipper_wall"
+        pkg="nodelet" type="nodelet" respawn="true"
+        args="load jsk_pcl/AttentionClipper $(arg manager)">
+    <remap from="~input/points" to="$(arg input_points)" />
+    <rosparam>
+      initial_pos: [1.0, 0, 1.0]
+      initial_rot: [0, 0, 0]
+      dimension_x: 3.0
+      dimension_y: 3.0
+      dimension_z: 0.5
+      frame_id: base_link
+    </rosparam >
+  </node>
+
+  <node name="extract_indices_wall"
+        pkg="nodelet" type="nodelet" respawn="true"
+        args="load jsk_pcl/ExtractIndices $(arg manager)">
+    <remap from="~input" to="$(arg input_points)" />
+    <remap from="~indices" to="attention_clipper_wall/output/point_indices" />
+    <rosparam>
+      keep_organized: true
+    </rosparam>
+  </node>
+
+  <node name="multi_plane_estimate_wall" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/OrganizedMultiPlaneSegmentation $(arg manager)"
+        output="screen"
+        machine="$(arg machine)">
+    <remap from="~input" to="extract_indices_wall/output" />
+    <rosparam>
+      max_curvature: 0.01
+      estimate_normal: true
+    </rosparam>
+  </node>
+
+  <node name="plane_normal_vector"
+	pkg="deco_with_fetch" type="plane_normal_vector.py"
+	output="screen" respawn="false">
+    <remap from="~input" to="/multi_plane_estimate_wall/output_refined_polygon" />
+  </node>
+
+
+  <!-- detect tabletop objects -->
+  <node name="attention_clipper"
+        pkg="nodelet" type="nodelet" respawn="true"
+        args="load jsk_pcl/AttentionClipper $(arg manager)">
+    <remap from="~input/points" to="$(arg input_points)" />
+    <rosparam>
+      initial_pos: [1.0, 0, 0.75]
+      initial_rot: [0, 0, 0]
+      dimension_x: 1.5
+      dimension_y: 2.0
+      dimension_z: 1.0
+      frame_id: base_link
+    </rosparam >
+  </node>
+
+  <node name="extract_indices"
+        pkg="nodelet" type="nodelet" respawn="true"
+        args="load jsk_pcl/ExtractIndices $(arg manager)">
+    <remap from="~input" to="$(arg input_points)" />
+    <remap from="~indices" to="attention_clipper/output/point_indices" />
+    <rosparam>
+      keep_organized: true
+    </rosparam>
+  </node>
+
+  <include file="$(find jsk_pcl_ros)/sample/tabletop_object_detector.launch">
+    <arg name="input" value="/extract_indices/output" />
+    <arg name="sensor_frame" value="$(arg sensor_frame)" />
+    <arg name="manager" value="$(arg manager)" />
+    <arg name="machine" value="$(arg machine)" />
+    <arg name="launch_openni" value="false" />
+    <arg name="launch_tracking" value="$(arg launch_tracking)" />
+    <arg name="launch_rviz" value="false" />
+    <arg name="publish_tf" value="$(arg publish_objects_tf)" />
+  </include>
+
+
+  <!-- 2Dpoint -> 3Dpoint -->
+  <node name="pointcloud_screenpoint_nodelet" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/PointcloudScreenpoint $(arg manager)"
+        output="screen" clear_params="true" respawn="true"
+        machine="$(arg machine)">
+    <remap from="~points" to="/screen_point/input/points" />
+    <!-- remap from="~points" to="$(arg input_points)" / -->
+    <remap from="~point" to="/screen_point/input/screenpoint" />
+    <rosparam>
+      queue_size: 10
+      crop_size: 10
+      search_size: 16
+    </rosparam>
+  </node>
+
+
+  <!-- 3Dpoint -> 2Dpoint Service-->
+  <node name="xyz_to_screen_point"
+	pkg="deco_with_fetch" type="xyz_to_screenpoint.py"
+	output="screen" respawn="false">
+    <remap from="~input/camera_info" to="$(arg camera_info)" />
+  </node>
+
+
+  <!-- think decoration -->
+  <node name="think_deco"
+	pkg="deco_with_fetch" type="think_deco_node.py"
+	output="screen" respawn="false">
+  </node>
+
+
+  <!-- check decorated status -->
+  <node name="check_deco_status"
+	pkg="deco_with_fetch" type="check_deco_status.py"
+	output="screen" respawn="false">
+  </node>
+
+
+</launch>

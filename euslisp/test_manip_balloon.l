@@ -1,7 +1,7 @@
 #!/usr/bin/env roseus
 
 (defun set-param-real ()
-  (setq *CATCH-X-OFFSET* 0)
+  (setq *CATCH-X-OFFSET* 50)
   (setq *CATCH-Z-OFFSET* 50)
   (setq *CATCH-BALLOON-TH* 0.05)  ;; 指の開き具合のずれ
 
@@ -38,15 +38,35 @@
   )
 
 (defun recog-and-catch-real ()
+
+  (defun after-catch (move_len move_rot)
+    (let* ((wall_x) (rot_num)
+	   (move_len (* -1 move_len))
+	   (move_rot (* -1 move_rot))
+	   (leave_x (* -1 *close-deco-x*)))
+      (format t "go-vel-linear ~A~%" move_len)
+      (go-vel-linear (/ move_len 1000.0) 1)
+      (format t "go-vel-rotate ~A~%" (* 180 (/ move_rot pi)))
+      (go-vel-rotate move_rot)
+      (before-push-pose)
+      (format t "leave_x: ~A~%" leave_x)
+      (go-vel-linear (/ leave_x 1000.0) 1)
+      (setq rot_num (- (floor (/ *rotate-rad* (/ pi 4))) 1))
+      (format t "rot_num: ~A~%" rot_num)
+      (dotimes (i rot_num)
+	(go-vel-rotate (* -1 (/ pi 4))))
+      (ros::duration-sleep 1.0)
+      ))
+
   (set-param-real)
   (init-global-param)
   (make-reset-pose)
   (send *ri* :stop-grasp)
 
-  (rotate-ref-wall)
-  (setq *wall-x* (get-distance-wall 320 240))
+  ;; (rotate-ref-wall)
+  ;; (setq *wall-x* (get-distance-wall 320 240))
 
-  (find-decoration (v- *look-at-pos* #f(0 0 100)) 5)
+  (find-decoration (v- *look-at-pos* #f(0 0 100)) 0)
   (close-decoration)
   (set-catch-pos-lst)
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env roseus
 
-(setq *CATCH-X-OFFSET* 0)
+(setq *CATCH-X-OFFSET* 100)
 (setq *CATCH-Z-OFFSET* 50)
 (setq *CATCH-BALLOON-TH* 0.2)
 
@@ -100,7 +100,7 @@
       (format t "ideal: ~A, real: ~A~%" ideal_z real_z)
       (format t "diff_z: ~A~%" diff_z)
       )
-    (send *fetch* :rarm :move-end-pos #f(0 0 10) :world)
+    (send *fetch* :rarm :move-end-pos #f(0 0 50) :world)
     (send-robot 1000)
     ))
 
@@ -109,9 +109,9 @@
 	 (cbox_pos cbox_pos)
 	 (arm_end_pos) (move_y) (ik_res t)
 	 (move_len) (move_rot))
-    (go-vel-linear (/ -500 1000.0) 1)
-    (setq *close-deco-x* (- *close-deco-x* 500))
-    (setq cbox_pos (v+ cbox_pos #f(500 0 0)))
+    (go-vel-linear (/ -200 1000.0) 1)
+    (setq *close-deco-x* (- *close-deco-x* 200))
+    (setq cbox_pos (v+ cbox_pos #f(200 150 0)))
     (setq move_rot (atan (/ (elt cbox_pos 1) (elt cbox_pos 0))))
     (format t "move_rot: ~A~%" (* 180 (/ move_rot pi)))
     (go-vel-rotate move_rot)
@@ -129,7 +129,7 @@
     (go-vel-linear (/ (- move_len *CATCH-X-OFFSET*) 1000.0) 1)
     (send *fetch* :rarm :move-end-pos (float-vector *CATCH-X-OFFSET* 0 0) :world)
     (send-robot 2000)
-    (withdraw-hand 0.02 (- (elt (get-arm-end-pos) 2) 50))
+    (withdraw-hand 0.01 (- (elt (get-arm-end-pos) 2) 50))
     (setq move_y -200)
     (setq ik_res (send *fetch* :rarm :move-end-pos (float-vector 0 move_y 0) :world))
     ;; (while (not ik_res)
