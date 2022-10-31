@@ -63,6 +63,14 @@ class MakeDecoImgs(object):
         cv2.imwrite(save_name, vis_decos_img)
 
     def convert_decoimg(self, save_name, save_mask_name, deco_3d_dims, deco_rec_uv):
+
+        def get_bimg_size(lt_u, lt_v, rb_u, rb_v):
+            bimg_w = self.bimg_lt_pos.y - self.bimg_rb_pos.y
+            bimg_h = self.bimg_lt_pos.z - self.bimg_rb_pos.z
+            bimg_w = bimg_w / (rb_u - lt_u) * 640
+            bimg_h = bimg_h / (rb_v - lt_v) * 480
+            return bimg_w, bimg_h
+
         lt, lb, rt, rb = self.reorder_point(deco_rec_uv.xs, deco_rec_uv.ys)
         height = int(deco_3d_dims.x)
         width = int(deco_3d_dims.y)
@@ -73,8 +81,7 @@ class MakeDecoImgs(object):
         # cv2.imwrite(save_name, img_trans)
         # resize
         # img_trans = cv2.imread(save_name)
-        bimg_width = self.bimg_lt_pos.y - self.bimg_rb_pos.y
-        bimg_height = self.bimg_lt_pos.z - self.bimg_rb_pos.z
+        bimg_width, bimg_height = get_bimg_size(240, 180, 400, 300)
         ratio_w = deco_3d_dims.y / bimg_width
         ratio_h = deco_3d_dims.x / bimg_height
         deco_w = int(640 * ratio_w)
