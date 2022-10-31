@@ -73,12 +73,14 @@ def remove_dup_deco(back_img, called_count):
 
 
 class ThinkDecoration:
-    def __init__(self, deco_imgs, deco_masks, input_img, output_img, decorated_pos, called_count, nums=21, generation=30, elite=2):
-        # 複数の飾りが重ならないようにする 0: 空きスペース, 1: 飾りが既にある, 2: 飾りが既にあり、書き換え不可能
+    def __init__(self, deco_imgs, deco_masks, input_img, output_img, cannot_place_pos, called_count, nums=21, generation=30, elite=2):
+        # 複数の飾りが重ならないようにする 0: 空きスペース, 1: 飾りが既にある, 2: 飾りが既にあるor壁がない、書き換え不可能
         self.visited = np.zeros((480, 640), dtype=np.int)
-        for lx, ly, rx, ry in decorated_pos:
+        for lx, ly, rx, ry in cannot_place_pos:
             self.visited[ly: ry, lx: rx] = 2
-        print("Decorated_pos: ", decorated_pos)
+        print("Cannot place pos: ", cannot_place_pos)
+        # print(np.array(self.visited))
+        # print(np.where(np.array(self.visited)==0))
         self.input = input_img
         self.H, self.W, _ = self.input.shape
         self.output = output_img
@@ -131,7 +133,7 @@ class ThinkDecoration:
     def generate_new_pos(self, pos_x, pos_y, h, w, debug=False):
         to_visit = deque([(pos_x, pos_y)])
         count = 0
-        while to_visit:
+        while to_visit and count < 100:
             count += 1
             pos_x, pos_y = to_visit.popleft()
             check_array = self.visited[int(pos_y - h/2.0): int(pos_y + h/2.0), int(pos_x - w/2.0): int(pos_x + w/2.0)]

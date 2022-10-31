@@ -73,14 +73,22 @@
     )
   )
 
-(defun convert-2D->points-msg (x y points_msg)
-  (let* ((point_msg (instance geometry_msgs::Point :init)))
+(defun make-point-msg (x y z)
+  (let* ((point_msg (instance geometry_msgs::Point :init))
+	 (x x) (y y) (z z))
+    (send point_msg :x x)
+    (send point_msg :y y)
+    (send point_msg :z z)
+    point_msg)
+  )
+
+(defun convert-2D->point-msg (x y points_msg)
+  (let* ((pub_point_msg))
     (convert-2D->3D x y points_msg)
     (format t "~A~%" result_3d_pos)
-    (send point_msg :x (elt result_3d_pos 0))
-    (send point_msg :y (elt result_3d_pos 1))
-    (send point_msg :z (elt result_3d_pos 2))
-    point_msg)
+    (setq pub_point_msg
+	  (make-point-msg (elt result_3d_pos 0) (elt result_3d_pos 1) (elt result_3d_pos 2)))
+    pub_point_msg)
   )
 
 (defun plane-norm-cb (msg)

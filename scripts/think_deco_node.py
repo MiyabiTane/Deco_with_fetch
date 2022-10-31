@@ -36,7 +36,8 @@ class ThinkDecorationNode:
         self.init_param()
         # for debug
         print_decoration_info(req.decos_img, req.decos_pos, req.decos_dims, req.decos_rec_uv, req.dimg_rect_pos,
-                                req.bimg_lt_pos, req.bimg_rb_pos, req.head_angle, req.look_at_point, req.look_at_uv)
+                                req.bimg_lt_pos, req.bimg_rb_pos, req.head_angle, req.look_at_point, req.look_at_uv,
+                                req.bimg_lt_uv, req.bimg_rb_uv)
         self.input_img = self.bridge.imgmsg_to_cv2(req.back_img, desired_encoding="bgr8")
         if not os.path.isdir(self.dir_path + "/images/" + str(self.called_count)):
             os.makedirs(self.dir_path + "/images/" + str(self.called_count))
@@ -60,7 +61,10 @@ class ThinkDecorationNode:
         # cv2.imwrite(self.dir_path + "/share/output.png", self.output_img)
         # think placement of decorations
         decorated_pos = remove_dup_deco(self.input_img, self.called_count)
-        think_deco = ThinkDecoration(self.deco_imgs, self.deco_masks, self.input_img, self.output_img, decorated_pos, self.called_count)
+        not_wall_pos = [(0, 0, int(req.bimg_lt_uv.x), 480), (0, 0, 640, int(req.bimg_lt_uv.y)),
+                        (int(req.bimg_rb_uv.x), 0, 640, 480), (0, int(req.bimg_rb_uv.y), 640, 480)]
+        think_deco = ThinkDecoration(self.deco_imgs, self.deco_masks, self.input_img,
+                                        self.output_img, decorated_pos + not_wall_pos, self.called_count)
         self.output_arr = think_deco.GA_calc()
 
         self.called_count += 1

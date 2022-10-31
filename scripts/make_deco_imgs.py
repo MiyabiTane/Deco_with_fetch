@@ -100,7 +100,7 @@ class MakeDecoImgs(object):
             self.convert_decoimg(save_name, save_mask_name, self.decos_dims[i], self.decos_rec_uv[i])
 
 def print_decoration_info(decos_img, decos_pos, decos_dims, decos_rec_uv, dimg_rect_pos,
-                            bimg_lt_pos, bimg_rb_pos, head_angle, look_at_point, look_at_uv):
+                            bimg_lt_pos, bimg_rb_pos, head_angle, look_at_point, look_at_uv, bimg_lt_uv, bimg_rb_uv):
     # deco_bboxes's frame_id -> "head_mount_kinect_rgb_optical_frame"
     # other's frame_id -> "base_footprint"
     bridge = CvBridge()
@@ -109,6 +109,8 @@ def print_decoration_info(decos_img, decos_pos, decos_dims, decos_rec_uv, dimg_r
     print("Back Img info->")
     print("lt: ", bimg_lt_pos.x, bimg_lt_pos.y, bimg_lt_pos.z)
     print("rb: ", bimg_rb_pos.x, bimg_rb_pos.y, bimg_rb_pos.z)
+    print("lt_uv: ", bimg_lt_uv.x, bimg_lt_uv.y)
+    print("rb_uv: ", bimg_rb_uv.x, bimg_rb_uv.y)
     print("head_angle: ", head_angle.data)
     print("look_at_point: ", look_at_point)
     print("look_at_uv: ", look_at_uv)

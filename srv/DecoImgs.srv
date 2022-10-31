@@ -6,6 +6,8 @@ geometry_msgs/Point[] decos_pos
 geometry_msgs/Point[] decos_dims
 geometry_msgs/Point bimg_lt_pos
 geometry_msgs/Point bimg_rb_pos
+geometry_msgs/Point bimg_lt_uv
+geometry_msgs/Point bimg_rb_uv
 std_msgs/Float64 head_angle
 geometry_msgs/Point look_at_point
 geometry_msgs/Point look_at_uv
