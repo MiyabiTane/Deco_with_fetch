@@ -5,7 +5,7 @@
 (setq *center-ydiff* 150)
 
 (defun find-boxes ()
-  (let* ((box_msg) (box_coords) (box_z) (bboxes_msg))
+  (let* ((box_msg) (box_coords) (box_x) (box_y) (box_z) (bboxes_msg))
     (setq *bboxes* '())
     (ros::duration-sleep 1.0)
     (setq bboxes_msg (one-shot-subscribe *bounding-box-list*
@@ -14,9 +14,12 @@
     (dotimes (i (length (send bboxes_msg :boxes)))
       (setq box_msg (elt (send bboxes_msg :boxes) i))
       (setq box_coords (elt (bbox->lst box_msg) 0))
+      (setq box_x (elt (send box_coords :pos) 0))
+      (setq box_y (elt (send box_coords :pos) 1))
       (setq box_z (elt (send box_coords :pos) 2))
       ;; ignore box on the floor
-      (if (> box_z 300)
+      (format t "box coords: ~A~%" box_coords)
+      (if (and (and (> box_z 500) (< (abs box_y) 1000)) (< box_x 2000))
 	  (setq *bboxes* (append *bboxes* (list box_msg)))
 	))
     (when (> (length *bboxes*) 0)
@@ -130,7 +133,7 @@
       (send *fetch* :head :look-at (v- look_at_pos #f(150 0 0)))
       (send-robot 1000)
       (find-boxes)
-      (when (or (< (length *bboxes*) deco_count) (< (get-decoration-x) 800))
+      (when (or (< (length *bboxes*) deco_count) (< (get-decoration-x) 900))
 	(go-vel-linear (/ -150 1000.0) 1)
 	(setq *close-deco-x* (- *close-deco-x* 150))
 	(send *fetch* :head :look-at look_at_pos)
@@ -159,7 +162,7 @@
     ))
 
 (defun recognize-decoration ()
-  (find-decoration (v- *look-at-pos* #f(0 0 100)) 5)
+  (find-decoration (v- *look-at-pos* #f(0 0 100)) 4)
   (close-decoration)
   (get-deco-image)
   )

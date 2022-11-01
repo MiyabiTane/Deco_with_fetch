@@ -106,9 +106,9 @@
   (let* ((cbox_pos cbox_pos)
 	 (arm_end_pos)
 	 (move_y))
-    (go-vel-linear (/ -400 1000.0) 1)
-    (setq *close-deco-x* (- *close-deco-x* 400))
-    (setq cbox_pos (v+ cbox_pos #f(400 0 0)))
+    (go-vel-linear (/ -300 1000.0) 1)
+    (setq *close-deco-x* (- *close-deco-x* 300))
+    (setq cbox_pos (v+ cbox_pos #f(300 0 0)))
     (set-before-catch-pose)
     (setq arm_end_pos (get-arm-end-pos))
     (send *fetch* :torso :waist-z :joint-angle

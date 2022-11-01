@@ -31,7 +31,7 @@
 
 
   <!-- calculate normal vector of wall -->
-  <node name="attention_clipper_wall"
+  <!-- node name="attention_clipper_wall"
         pkg="nodelet" type="nodelet" respawn="true"
         args="load jsk_pcl/AttentionClipper $(arg manager)">
     <remap from="~input/points" to="$(arg input_points)" />
@@ -43,9 +43,9 @@
       dimension_z: 0.5
       frame_id: base_link
     </rosparam >
-  </node>
+  </node -->
 
-  <node name="extract_indices_wall"
+  <!-- node name="extract_indices_wall"
         pkg="nodelet" type="nodelet" respawn="true"
         args="load jsk_pcl/ExtractIndices $(arg manager)">
     <remap from="~input" to="$(arg input_points)" />
@@ -53,13 +53,14 @@
     <rosparam>
       keep_organized: true
     </rosparam>
-  </node>
+  </node -->
 
   <node name="multi_plane_estimate_wall" pkg="nodelet" type="nodelet"
         args="load jsk_pcl/OrganizedMultiPlaneSegmentation $(arg manager)"
         output="screen"
         machine="$(arg machine)">
-    <remap from="~input" to="extract_indices_wall/output" />
+    <!-- remap from="~input" to="extract_indices_wall/output" / -->
+    <remap from="~input" to="$(arg input_points)" />
     <rosparam>
       max_curvature: 0.01
       estimate_normal: true
@@ -74,7 +75,7 @@
 
 
   <!-- detect tabletop objects -->
-  <node name="attention_clipper"
+  <!-- node name="attention_clipper"
         pkg="nodelet" type="nodelet" respawn="true"
         args="load jsk_pcl/AttentionClipper $(arg manager)">
     <remap from="~input/points" to="$(arg input_points)" />
@@ -86,9 +87,9 @@
       dimension_z: 1.0
       frame_id: base_link
     </rosparam >
-  </node>
+  </node -->
 
-  <node name="extract_indices"
+  <!-- node name="extract_indices"
         pkg="nodelet" type="nodelet" respawn="true"
         args="load jsk_pcl/ExtractIndices $(arg manager)">
     <remap from="~input" to="$(arg input_points)" />
@@ -96,10 +97,11 @@
     <rosparam>
       keep_organized: true
     </rosparam>
-  </node>
+  </node -->
 
   <include file="$(find jsk_pcl_ros)/sample/tabletop_object_detector.launch">
-    <arg name="input" value="/extract_indices/output" />
+    <!-- arg name="input" value="/extract_indices/output" / -->
+    <arg name="input" value="$(arg input_points)" />
     <arg name="sensor_frame" value="$(arg sensor_frame)" />
     <arg name="manager" value="$(arg manager)" />
     <arg name="machine" value="$(arg machine)" />
@@ -119,9 +121,10 @@
     <!-- remap from="~points" to="$(arg input_points)" / -->
     <remap from="~point" to="/screen_point/input/screenpoint" />
     <rosparam>
+      approximate_sync: true
       queue_size: 10
-      crop_size: 10
-      search_size: 16
+      crop_size: 20
+      search_size: 32
     </rosparam>
   </node>
 

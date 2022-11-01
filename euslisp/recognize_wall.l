@@ -21,7 +21,9 @@
 	  (one-shot-subscribe *head-camera-points*
 			      sensor_msgs::PointCloud2 :after-stamp (ros::time-now)))
     ;; set *wall-x*
-    (convert-2D->3D 320 240 *wall-pcl*)
+    (setq result_3d_pos nil)
+    (while (not result_3d_pos)
+      (convert-2D->3D 320 240 *wall-pcl*))
     (format t "center pos: ~A~%" result_3d_pos)
     (setq *wall-x* (elt result_3d_pos 0))
 
@@ -29,7 +31,9 @@
     (setq u (elt uv_lst 0))
     (setq v (elt uv_lst 1))
     (format t "left_top pos: ~A, ~A~%" u v)
-    (setq point_msg (convert-2D->point-msg u v *wall-pcl*))
+    ;; (setq point_msg (convert-2D->point-msg u v *wall-pcl*))
+    (setq point_msg (make-point-msg
+		     (elt result_3d_pos 0) (elt result_3d_pos 1) (elt result_3d_pos 2)))
     (send *dimg-req-msg* :bimg_lt_pos point_msg)
     (setq point_msg (make-point-msg u v 0))
     (send *dimg-req-msg* :bimg_lt_uv point_msg)
@@ -38,7 +42,9 @@
     (setq u (elt uv_lst 0))
     (setq v (elt uv_lst 1))
     (format t "right_bottom pos: ~A, ~A~%" u v)
-    (setq point_msg (convert-2D->point-msg u v *wall-pcl*))
+    ;; (setq point_msg (convert-2D->point-msg u v *wall-pcl*))
+    (setq point_msg (make-point-msg
+		     (elt result_3d_pos 0) (elt result_3d_pos 1) (elt result_3d_pos 2)))
     (send *dimg-req-msg* :bimg_rb_pos point_msg)
     (setq point_msg (make-point-msg u v 0))
     (send *dimg-req-msg* :bimg_rb_uv point_msg)

@@ -41,6 +41,7 @@
   )
 
 (defun screen-pos-cb (msg)
+  (format t "screen-point-cb called~%")
   (setq coords (make-coords :pos (ros::tf-point->pos (send msg :point))))
   (send coords :transform
 	(send *tfl* :lookup-transform *base-frame* *camera-frame* (ros::time 0)) :world)
