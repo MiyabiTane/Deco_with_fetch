@@ -42,7 +42,8 @@ class ThinkDecorationNode:
         if not os.path.isdir(self.dir_path + "/images/" + str(self.called_count)):
             os.makedirs(self.dir_path + "/images/" + str(self.called_count))
         cv2.imwrite(self.dir_path + "/images/" + str(self.called_count) + "/back_img.jpg", self.input_img)
-        make_deco_imgs = MakeDecoImgs(req.decos_img, req.bimg_lt_pos, req.bimg_rb_pos, req.decos_dims, req.decos_rec_uv, self.called_count)
+        make_deco_imgs = MakeDecoImgs(req.decos_img, req.bimg_lt_pos, req.bimg_rb_pos, req.decos_dims,
+                                        req.decos_rec_uv, self.called_count, req.bimg_lt_uv, req.bimg_rb_uv)
         make_deco_imgs.main()
         files = glob.glob(self.dir_path + "/images/" + str(self.called_count) + "/input*.jpg")
         files = sorted(files, key=lambda x: int(x[-5]))
@@ -63,8 +64,8 @@ class ThinkDecorationNode:
         decorated_pos = remove_dup_deco(self.input_img, self.called_count)
         not_wall_pos = [(0, 0, int(req.bimg_lt_uv.x), 480), (0, 0, 640, int(req.bimg_lt_uv.y)),
                         (int(req.bimg_rb_uv.x), 0, 640, 480), (0, int(req.bimg_rb_uv.y), 640, 480)]
-        think_deco = ThinkDecoration(self.deco_imgs, self.deco_masks, self.input_img,
-                                        self.output_img, decorated_pos + not_wall_pos, self.called_count)
+        think_deco = ThinkDecoration(self.deco_imgs, self.deco_masks, self.input_img, self.output_img,
+                                        decorated_pos + not_wall_pos, self.called_count, req.bimg_rb_uv)
         self.output_arr = think_deco.GA_calc()
 
         self.called_count += 1

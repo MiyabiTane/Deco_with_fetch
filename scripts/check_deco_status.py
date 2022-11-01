@@ -51,6 +51,7 @@ class CheckDecoStatus:
         thresh = 1.1
         ga_back_img = cv2.imread(self.share_dir_path + "ga_output_" + str(req.deco_count) + ".jpg")
         real_back_img = self.bridge.imgmsg_to_cv2(req.back_img, desired_encoding="bgr8")
+        cv2.imwrite(self.images_dir_path + str(req.deco_count) + "/deco_result.jpg", real_back_img)
         # ga_back_img = cv2.imread(self.share_dir_path + "ga_output_status.jpg")
         # real_back_img = cv2.imread(self.share_dir_path + "result_0.jpg")
         deco_img = cv2.imread(self.images_dir_path + str(req.deco_count) + "/input" + str(req.box_num) + ".jpg")

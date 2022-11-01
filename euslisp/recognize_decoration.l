@@ -82,7 +82,7 @@
       (format t "find ~A boxes~%" (length *bboxes*))
       (when (< (length *bboxes*) deco_count)
 	(go-vel-rotate (* -1.0 (/ pi 8)))
-	(setq *rotate-rad* (+ *rotate-rad* (* -1.0 (/ pi 8))))
+	(setq *rotate-rad* (- *rotate-rad* (/ pi 8)))
 	(find-boxes)
 	(format t "find ~A boxes~%" (length *bboxes*))
 	(setq fin_flag 1))

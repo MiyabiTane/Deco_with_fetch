@@ -73,7 +73,7 @@ def remove_dup_deco(back_img, called_count):
 
 
 class ThinkDecoration:
-    def __init__(self, deco_imgs, deco_masks, input_img, output_img, cannot_place_pos, called_count, nums=21, generation=30, elite=2):
+    def __init__(self, deco_imgs, deco_masks, input_img, output_img, cannot_place_pos, called_count, bimg_rb_uv, nums=21, generation=30, elite=2):
         # 複数の飾りが重ならないようにする 0: 空きスペース, 1: 飾りが既にある, 2: 飾りが既にあるor壁がない、書き換え不可能
         self.visited = np.zeros((480, 640), dtype=np.int)
         for lx, ly, rx, ry in cannot_place_pos:
@@ -93,6 +93,7 @@ class ThinkDecoration:
         self.genes = []
         self.best_gene = (-1 * float('inf'), None)
         self.called_count = called_count
+        self.bimg_rb_uv = bimg_rb_uv
 
         for _ in range(nums):
             gene = []
@@ -162,7 +163,7 @@ class ThinkDecoration:
             if ans_y - h / 2 >= 0:
                 to_visit.append((pos_x, ans_y))
         # どこへもずらせない時は画像の右下に配置
-        return int(self.W - w / 2), int(self.H - h / 2)
+        return int((self.W - self.bimg_rb_uv.x) - w / 2), int((self.H - self.bimg_rb_uv.y) - h / 2)
 
 
     def generate_img(self, gene):

@@ -47,31 +47,34 @@
   (setq result_3d_pos (send coords :pos))
   (setq cur_x (elt result_3d_pos 0))
   (when (not (= pre_x cur_x))
-    (setq flag 1)
+    (setq convert_flag 1)
     (setq pre_x cur_x))
   )
 
-(defun convert-2D->3D (x y points_msg)
+(defun convert-2D->3D (x y points_msg)  ;; return flag: 0 if there are not points
   ;; points_msg: pointcloud info
   ;; use pointcloud_screenpoint_nodelet
   ;; result 3D pos: result_3d_pos
   (let* ((x x) (y y) (points_msg points_msg)
-	 (pub_xy_msg (instance geometry_msgs::PointStamped :init)))
+	 (pub_xy_msg (instance geometry_msgs::PointStamped :init))
+	 (begin_time (ros::time-now))
+	 (end_time) (elapsed_time 0))
     (ros::subscribe *sp-sub-topic* geometry_msgs::PointStamped #'screen-pos-cb)
     (send points_msg :header :stamp (ros::time-now))  ;; to sync
     (send pub_xy_msg :header :stamp (ros::time-now))
     (send pub_xy_msg :header :frame_id *camera-frame*)
     (send (send pub_xy_msg :point) :x x)
     (send (send pub_xy_msg :point) :y y)
-    (setq flag 0)
-    (while (= flag 0)
+    (setq convert_flag 0)
+    (while (and (= convert_flag 0) (< elapsed_time 5))
       (ros::publish *sp-screenpoint-pub-topic* pub_xy_msg)
       (ros::publish *sp-points-pub-topic* points_msg)
       (ros::spin-once)
-      (ros::sleep))
+      (ros::sleep)
+      (setq end_time (ros::time-now))
+      (setq elapsed_time (- (send end_time :sec) (send begin_time :sec))))
     (ros::unsubscribe *sp-sub-topic*)
-    )
-  )
+    ))
 
 (defun make-point-msg (x y z)
   (let* ((point_msg (instance geometry_msgs::Point :init))

@@ -22,7 +22,7 @@ DIR_PATH = roslib.packages.get_pkg_dir('deco_with_fetch') + "/scripts"
 # req.decos_img, req.decos_pos, req.decos_dims, req.decos_rec_uv, req.dimg_rect_pos,
 # req.bimg_lt_pos, req.bimg_rb_pos, req.head_angle, req.look_at_point, req.look_at_uv
 class MakeDecoImgs(object):
-    def __init__(self, decos_img, bimg_lt_pos, bimg_rb_pos, decos_dims, decos_rec_uv, called_count):
+    def __init__(self, decos_img, bimg_lt_pos, bimg_rb_pos, decos_dims, decos_rec_uv, called_count, bimg_lt_uv, bimg_rb_uv):
         bridge = CvBridge()
         decos_img = bridge.imgmsg_to_cv2(decos_img, desired_encoding="bgr8")
         if not os.path.isdir(DIR_PATH + "/images/" + str(called_count)):
@@ -32,6 +32,8 @@ class MakeDecoImgs(object):
         self.decos_img = decos_img
         self.bimg_lt_pos = bimg_lt_pos
         self.bimg_rb_pos = bimg_rb_pos
+        self.bimg_lt_uv = bimg_lt_uv
+        self.bimg_rb_uv = bimg_rb_uv
         self.decos_dims = decos_dims
         self.decos_rec_uv = decos_rec_uv
         self.count = called_count
@@ -81,7 +83,7 @@ class MakeDecoImgs(object):
         # cv2.imwrite(save_name, img_trans)
         # resize
         # img_trans = cv2.imread(save_name)
-        bimg_width, bimg_height = get_bimg_size(240, 180, 400, 300)
+        bimg_width, bimg_height = get_bimg_size(self.bimg_lt_uv.x, self.bimg_lt_uv.y, self.bimg_rb_uv.x, self.bimg_rb_uv.y)
         ratio_w = deco_3d_dims.y / bimg_width
         ratio_h = deco_3d_dims.x / bimg_height
         deco_w = int(640 * ratio_w)

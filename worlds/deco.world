@@ -34,7 +34,7 @@
     <include>
       <name>room73b2-external-wall-static</name>
       <uri>model://room73b2-external-wall-0_static</uri>
-      <pose>2.0 0 0.6 0 0 1.57</pose>
+      <pose>2.0 1.0 0.6 0 0 1.57</pose>
     </include>
     <include>
       <uri>model://cafe_table</uri>
