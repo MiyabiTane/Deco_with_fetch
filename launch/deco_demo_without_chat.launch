@@ -121,11 +121,11 @@
     <!-- remap from="~points" to="$(arg input_points)" / -->
     <remap from="~point" to="/screen_point/input/screenpoint" />
     <rosparam>
-      approximate_sync: true
       queue_size: 10
       crop_size: 20
       search_size: 32
     </rosparam>
+    <param name="use_sync" value="false" />
   </node>
 
 

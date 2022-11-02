@@ -89,7 +89,9 @@
       (setq y (send (send (elt result_arr i) :position) :y))
       ;; (format t "x: ~A, y: ~A~%" x y) 
       ;; use point_cloud of wall
-      (convert-2D->3D x y *wall-pcl*)
+      (setq result_3d_pos nil)
+      (while (not result_3d_pos)
+	(convert-2D->3D x y *wall-pcl*))
       (setq *place-pos-lst* (append *place-pos-lst* (list result_3d_pos))))
     (format t "place_pos_lst: ~A~%" *place-pos-lst*)
     ;; (send *fetch* :angle-vector fetch_pose)

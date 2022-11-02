@@ -80,6 +80,7 @@
 (defun main-once ()
   (send *ri* :stop-grasp)
   (make-reset-pose)
+  (format t "set reset pose~%")
   (recognize-wall)
   (recognize-decoration)
   (think-decoration)

@@ -54,7 +54,7 @@
   (let* ((image_raw_msg
 	  (one-shot-subscribe *head-camera-img*
 			      sensor_msgs::Image :after-stamp (ros::time-now))))
-    (rotate-ref-wall)
+    (rotate-ref-wall 0.0)
     (format t "finish rotate~%")
     (send *dimg-req-msg* :back_img image_raw_msg)
     (get-backimg-pos)
