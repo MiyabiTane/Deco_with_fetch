@@ -13,7 +13,7 @@
   <arg name="audio_play" default="false" />
   <arg name="audio_device" default="" />
   <arg name="rate" default="1.0" />
-  <arg name="rviz_config" default="$(find jsk_fetch_startup)/config/jsk_startup.rviz" />
+  <arg name="rviz_config" default="$(find deco_with_fetch)/config/deco.rviz" />
 
   <arg name="RGB_CAMERA_INFO" value="/head_camera/rgb/throttled/camera_info" />
   <arg name="RGB_IMAGE" value="/head_camera/rgb/throttled/image_rect_color" />

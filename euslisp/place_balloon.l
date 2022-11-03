@@ -1,10 +1,10 @@
 #!/usr/bin/env roseus
 
 (setq *PLACE-POS-OFFSET* #f(1000 -200.6 0))  ;; #f(1000 -313.6 0))
-(setq *PUSH-X-OFFSET* 400)
+(setq *PUSH-X-OFFSET* 0) ;; 0.0
 
 (setq *PUSH-TH-1* 0.2)
-(setq *PUSH-TH-2* -10)  ;; 10.0
+(setq *PUSH-TH-2* 10)  ;; 10.0
 
 (defun push-balloon (thresh1 thresh2)
   ;; thresh: diff between ideal and real [mm]

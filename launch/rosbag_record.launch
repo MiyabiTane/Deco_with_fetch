@@ -1,6 +1,6 @@
 <launch>
   <arg name="rosbag" doc="rosbag file path" />
-  <arg name="compress" default="false" doc="whether compress rosbag or not." />
+  <arg name="compress" default="true" doc="whether compress rosbag or not." />
   <arg name="other_topics" default=""/>
   <arg name="use_regex" default="true" doc="whether include regex in topics or not." />
   <arg name="other_options" default=""/>
@@ -39,6 +39,7 @@
           /server_name/smach/container_status
           /server_name/smach/container_structure
           /audio
+          /speech_to_text
           /dialog_response
           /eyebrows_expression/input
           $(arg other_topics)
