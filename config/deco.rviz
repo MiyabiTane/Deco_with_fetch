@@ -1,14 +1,17 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 152
+    Help Height: 0
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /XtionRGB1
+        - /PanoramaImage1
+        - /Image1
         - /BoundingBoxArray1
         - /PolygonArray1
         - /PolygonArray2
       Splitter Ratio: 0.4187380373477936
-    Tree Height: 70
+    Tree Height: 222
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -27,7 +30,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: XtionPointCloud
   - Class: jsk_rviz_plugin/CancelAction
     Name: CancelAction
     Topic: ""
@@ -68,6 +71,131 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        bellows_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        bellows_link2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        elbow_flex_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        estop_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        forearm_roll_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        gripper_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        head_camera_depth_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        head_camera_depth_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        head_camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        head_camera_rgb_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        head_camera_rgb_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        head_pan_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        head_tilt_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        l_gripper_finger_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        l_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        laser_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        r_gripper_finger_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        r_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        shoulder_lift_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        shoulder_pan_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        torso_fixed_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        torso_lift_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        upperarm_roll_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wrist_flex_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wrist_roll_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
@@ -366,7 +494,7 @@ Visualization Manager:
           top: 10
           transport hint: raw
           width: 320
-      Enabled: true
+      Enabled: false
       Name: XtionRGB
     - Class: rviz/Group
       Displays:
@@ -409,7 +537,7 @@ Visualization Manager:
           top: 10
           transport hint: raw
           width: 480
-      Enabled: true
+      Enabled: false
       Name: PanoramaImage
     - Alpha: 1
       Autocompute Intensity Bounds: true
@@ -443,7 +571,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /head_camera/rgb/image_raw
+      Image Topic: /head_camera/rgb/image_rect_color
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -521,25 +649,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.569168567657471
+      Distance: 2.77262282371521
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 1.4659643173217773
-        Y: -1.2048832178115845
-        Z: 0.48131421208381653
+        X: 2.6830978393554688
+        Y: -1.628822922706604
+        Z: 1.6456984281539917
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.30039849877357483
+      Pitch: 0.3953978717327118
       Target Frame: base_link
       Value: Orbit (rviz)
-      Yaw: 4.093575477600098
+      Yaw: 5.473576545715332
     Saved: ~
 Window Geometry:
   CancelAction:

@@ -1,7 +1,7 @@
 #!/usr/bin/env roseus
 
-(setq *rotate-thresh* (* pi (/ 10 180.0)))
-(setq *wall-rotate-rad* (/ pi 8))
+(setq *rotate-thresh* (deg2rad 10))
+(setq *wall-rotate-rad* (deg2rad 20))
 
 (defvar *sp-screenpoint-pub-topic* "/screen_point/input/screenpoint")
 (defvar *sp-points-pub-topic* "/screen_point/input/points")
@@ -24,7 +24,7 @@
   )
 
 (defun go-vel-rotate (move_rad)  ;; move_rad[rad] move_time[s]
-  (format t "rotate: ~A~%" (* 180 (/ move_rad pi)))
+  (format t "rotate: ~A~%" (rad2deg move_rad))
   (send *ri* :go-velocity 0 0 move_rad)
   (send *ri* :wait-interpolation)
   )
@@ -138,7 +138,7 @@
       (setq vbox_x (elt vbox_pos 0))
       (setq vbox_y (elt vbox_pos 1))
       (setq vbox_rad (* -1 (atan (/ vbox_y vbox_x))))
-      (format t "- ~A pos: ~A rad: ~A~%" i vbox_pos (* 180 (/ vbox_rad pi)))
+      (format t "- ~A pos: ~A rad: ~A~%" i vbox_pos (rad2deg vbox_rad))
       (when (and (< (abs (- vbox_rad goal_rad)) diff_rad) (> vbox_x 0))
 	(setq diff_rad (abs (- vbox_rad goal_rad)))
 	(setq wall_box_pos vbox_pos)
@@ -148,17 +148,16 @@
     wall_box_pos)
   )
 
-(defun rotate-ref-box (rad)
-  (let* ((rotate_once_rad *wall-rotate-rad*)
-	 (ideal_rad rad)
+(defun rotate-ref-box (goal_rad once_rad)
+  (let* ((rotate_once_rad once_rad)
+	 (ideal_rad goal_rad)
 	 (fin_flag 1)
 	 (box_rad) (vbox_pos))
     (setq rotate_try_count (+ rotate_try_count 1))
-    (setq vbox_pos (select-wall-norm-box rad))
+    (setq vbox_pos (select-wall-norm-box goal_rad))
     (when vbox_pos
       (setq box_rad (* -1 (atan (/ (elt vbox_pos 1) (elt vbox_pos 0)))))
-      (format t "ideal_rad: ~A, box_rad: ~A~%"
-	      (* 180 (/ ideal_rad pi)) (* 180 (/ box_rad pi)))
+      (format t "ideal_rad: ~A, box_rad: ~A~%" (rad2deg ideal_rad) (rad2deg box_rad))
       (when (> (abs (- ideal_rad box_rad)) *rotate-thresh*)
 	(if (> (- ideal_rad box_rad) 0)
 	    (go-vel-rotate rotate_once_rad)
@@ -168,8 +167,8 @@
     fin_flag)
   )
 
-(defun rotate-ref-wall (rad)
-  (let* ((rad rad) (fin_flag 0)
+(defun rotate-ref-wall (goal_rad once_rad)
+  (let* ((goal_rad goal_rad) (fin_flag 0)
 	 (begin_time (ros::time-now))
 	 (elapsed_time 0))
     (setq rotate_try_count 0)
@@ -185,7 +184,7 @@
       (format t "try_count ~A~%" rotate_try_count)
       (if (and (> (length norm_rpy_lst) 0)
 	       (< rotate_try_count 20))
-	  (setq fin_flag (rotate-ref-box rad))
+	  (setq fin_flag (rotate-ref-box goal_rad once_rad))
 	(setq fin_flag 1))
       (if (= fin_flag 1)
 	  (format t "finish rotate~%")))
@@ -233,8 +232,9 @@
     (setq result_3d_pos nil)
     (while (not result_3d_pos)
       (convert-2D->3D x y wall_pcl))
-    ;; (while (not result_3d_pos)  ;; to get more accurate value
-    ;;   (convert-2D->3D x y wall_pcl))
+    (setq result_3d_pos nil)
+    (while (not result_3d_pos)  ;; to get more accurate value
+      (convert-2D->3D x y wall_pcl))
     (setq wall_x (elt result_3d_pos 0))
     (format t "wall_x: ~A~%" wall_x)
     wall_x)
@@ -245,15 +245,3 @@
     (send vbox :locate pos :world)
     (objects (list *fetch* vbox))
   ))
-
-;; -- old func --
-(defun select-wall-norm ()  ;; return norm_rpy of wall
-  (let* ((center_y 10000) (pos) (abs_y) (wall_num 0))
-    (dotimes (i (length norm_coords_lst))
-      (setq pos (send (elt norm_coords_lst i) :pos))
-      (setq abs_y (abs (elt pos 1)))
-      (when (< abs_y center_y)
-	(setq center_y abs_y)
-	(setq wall_num i)))
-    (elt norm_rpy_lst wall_num))
-  )

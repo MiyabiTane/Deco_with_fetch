@@ -15,13 +15,13 @@
     <!-- Spawn models into gazebo -->
     <node name="spawn_demo_cube_yellow" pkg="gazebo_ros" type="spawn_model"
           args="-file $(find deco_with_fetch)/models/demo_cube_yellow/model.sdf -sdf
-                -x -1.3 -y 0.0 -z 0.65 -model demo_cube_yellow" />
+                -x -1.1 -y 0.0 -z 0.65 -model demo_cube_yellow" />
     <node name="spawn_demo_cube_red" pkg="gazebo_ros" type="spawn_model"
           args="-file $(find deco_with_fetch)/models/demo_cube_red/model.sdf -sdf
-                -x -1.3 -y 0.5 -z 0.65 -model demo_cube_red" />
+                -x -1.1 -y 0.5 -z 0.65 -model demo_cube_red" />
     <node name="spawn_demo_cube_green" pkg="gazebo_ros" type="spawn_model"
           args="-file $(find deco_with_fetch)/models/demo_cube_green/model.sdf -sdf
-                -x -1.3 -y -0.5 -z 0.65 -model demo_cube_green" />
+                -x -1.1 -y -0.5 -z 0.65 -model demo_cube_green" />
   </group>
 
   <group if="$(arg run_rviz)">
@@ -31,35 +31,12 @@
 
 
   <!-- calculate normal vector of wall -->
-  <node name="attention_clipper_wall"
-        pkg="nodelet" type="nodelet" respawn="true"
-        args="load jsk_pcl/AttentionClipper $(arg manager)">
-    <remap from="~input/points" to="$(arg input_points)" />
-    <rosparam>
-      initial_pos: [1.0, 0, 1.0]
-      initial_rot: [0, 0, 0]
-      dimension_x: 3.0
-      dimension_y: 3.0
-      dimension_z: 0.5
-      frame_id: base_link
-    </rosparam >
-  </node>
-
-  <node name="extract_indices_wall"
-        pkg="nodelet" type="nodelet" respawn="true"
-        args="load jsk_pcl/ExtractIndices $(arg manager)">
-    <remap from="~input" to="$(arg input_points)" />
-    <remap from="~indices" to="attention_clipper_wall/output/point_indices" />
-    <rosparam>
-      keep_organized: true
-    </rosparam>
-  </node>
-
   <node name="multi_plane_estimate_wall" pkg="nodelet" type="nodelet"
         args="load jsk_pcl/OrganizedMultiPlaneSegmentation $(arg manager)"
         output="screen"
         machine="$(arg machine)">
-    <remap from="~input" to="extract_indices_wall/output" />
+    <!-- remap from="~input" to="extract_indices_wall/output" / -->
+    <remap from="~input" to="$(arg input_points)" />
     <rosparam>
       max_curvature: 0.01
       estimate_normal: true
@@ -74,32 +51,9 @@
 
 
   <!-- detect tabletop objects -->
-  <node name="attention_clipper"
-        pkg="nodelet" type="nodelet" respawn="true"
-        args="load jsk_pcl/AttentionClipper $(arg manager)">
-    <remap from="~input/points" to="$(arg input_points)" />
-    <rosparam>
-      initial_pos: [1.0, 0, 0.75]
-      initial_rot: [0, 0, 0]
-      dimension_x: 1.5
-      dimension_y: 2.0
-      dimension_z: 1.0
-      frame_id: base_link
-    </rosparam >
-  </node>
-
-  <node name="extract_indices"
-        pkg="nodelet" type="nodelet" respawn="true"
-        args="load jsk_pcl/ExtractIndices $(arg manager)">
-    <remap from="~input" to="$(arg input_points)" />
-    <remap from="~indices" to="attention_clipper/output/point_indices" />
-    <rosparam>
-      keep_organized: true
-    </rosparam>
-  </node>
-
   <include file="$(find jsk_pcl_ros)/sample/tabletop_object_detector.launch">
-    <arg name="input" value="/extract_indices/output" />
+    <!-- arg name="input" value="/extract_indices/output" / -->
+    <arg name="input" value="$(arg input_points)" />
     <arg name="sensor_frame" value="$(arg sensor_frame)" />
     <arg name="manager" value="$(arg manager)" />
     <arg name="machine" value="$(arg machine)" />
@@ -120,9 +74,10 @@
     <remap from="~point" to="/screen_point/input/screenpoint" />
     <rosparam>
       queue_size: 10
-      crop_size: 10
-      search_size: 16
+      crop_size: 20
+      search_size: 32
     </rosparam>
+    <param name="use_sync" value="false" />
   </node>
 
 

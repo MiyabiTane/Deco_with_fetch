@@ -39,12 +39,12 @@
     <include>
       <uri>model://cafe_table</uri>
       <!-- see http://sdformat.org/spec?ver=1.5&elem=model#model_pose for definition -->
-      <pose>-1.5 -0.4 -0.2  0 0 0</pose>
+      <pose>-1.3 -0.4 -0.2  0 0 0</pose>
     </include>
     <include>
       <uri>model://cafe_table</uri>
       <!-- see http://sdformat.org/spec?ver=1.5&elem=model#model_pose for definition -->
-      <pose>-1.5 0.4 -0.2  0 0 0</pose>
+      <pose>-1.3 0.4 -0.2  0 0 0</pose>
     </include>
     <!-- disable shadow -->
     <scene>

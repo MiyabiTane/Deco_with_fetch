@@ -33,6 +33,7 @@
 (setq *look-at-pos* #f(500 0 1100))
 (setq *torso-z* 50)
 (setq *deco-loop-num* 0)
+(setq *find-rot-num* 4)
 
 (defun init-global-param ()
   (setq pre_x -1)
@@ -44,7 +45,6 @@
   (setq *place-pos-lst* '())
   (setq *catch-pos-lst* '())
   (setq *close-deco-x* 0)  ;; to go-back default position
-  (setq *rotate-rad* 0)
   (setq *catch-box-num* 0)
   )
 
@@ -91,6 +91,8 @@
 
 (defun set-sim ()
   (setq *head-camera-img* "/head_camera/rgb/image_raw")
+  (setq *PUSH-X-OFFSET* 600)
+  (setq *find-rot-num* 6)
   (defun go-vel-rotate (move_rad)  ;; move_rad[rad] move_time[s]
     (if (< move_rad 0)
 	(send *ri* :go-velocity 0 0 (- move_rad 0.18))
@@ -113,25 +115,3 @@
     (set-sim)
     (main loop_num)
     ))
-
-(defun restart-demo ()
-  (setq *prev-mux-topic* "/speech_to_text_google")
-  (setq *look-at-pos* #f(500 0 1100))
-  (setq *torso-z* 50)
-  (setq *deco-loop-num* 0)
-
-  (load "common_func.l")
-  (load "recognize_wall.l")
-  (load "recognize_decoration.l")
-  (load "think_decoration.l")
-  (load "catch_balloon.l")
-  (load "place_balloon.l")
-  (load "check_decoration.l")
-  (load "test_manip_balloon.l")
-
-  (init-global-param)
-  (ros::unsubscribe *head-camera-img*)
-  (ros::unsubscribe *head-camera-points*)
-  (ros::unsubscribe *sp-sub-topic*)
-  )
-

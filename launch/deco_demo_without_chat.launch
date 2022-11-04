@@ -15,13 +15,13 @@
     <!-- Spawn models into gazebo -->
     <node name="spawn_demo_cube_yellow" pkg="gazebo_ros" type="spawn_model"
           args="-file $(find deco_with_fetch)/models/demo_cube_yellow/model.sdf -sdf
-                -x -1.3 -y 0.0 -z 0.65 -model demo_cube_yellow" />
+                -x -1.1 -y 0.0 -z 0.65 -model demo_cube_yellow" />
     <node name="spawn_demo_cube_red" pkg="gazebo_ros" type="spawn_model"
           args="-file $(find deco_with_fetch)/models/demo_cube_red/model.sdf -sdf
-                -x -1.3 -y 0.5 -z 0.65 -model demo_cube_red" />
+                -x -1.1 -y 0.5 -z 0.65 -model demo_cube_red" />
     <node name="spawn_demo_cube_green" pkg="gazebo_ros" type="spawn_model"
           args="-file $(find deco_with_fetch)/models/demo_cube_green/model.sdf -sdf
-                -x -1.3 -y -0.5 -z 0.65 -model demo_cube_green" />
+                -x -1.1 -y -0.5 -z 0.65 -model demo_cube_green" />
   </group>
 
   <group if="$(arg run_rviz)">
