@@ -27,6 +27,7 @@
   (format t "rotate: ~A~%" (rad2deg move_rad))
   (send *ri* :go-velocity 0 0 move_rad)
   (send *ri* :wait-interpolation)
+  (ros::duration-sleep 1.0)
   )
 
 (defun go-vel-linear (move_x move_time)  ;; move_x[m] move_time[s]
@@ -139,10 +140,11 @@
       (setq vbox_y (elt vbox_pos 1))
       (setq vbox_rad (* -1 (atan (/ vbox_y vbox_x))))
       (format t "- ~A pos: ~A rad: ~A~%" i vbox_pos (rad2deg vbox_rad))
-      (when (and (< (abs (- vbox_rad goal_rad)) diff_rad) (> vbox_x 0))
-	(setq diff_rad (abs (- vbox_rad goal_rad)))
-	(setq wall_box_pos vbox_pos)
-	))
+      (when (not (and (> (abs goal_rad) 40) (< (* vbox_rad goal_rad) 0)))
+	(when (and (< (abs (- vbox_rad goal_rad)) diff_rad) (> vbox_x 0))
+	  (setq diff_rad (abs (- vbox_rad goal_rad)))
+	  (setq wall_box_pos vbox_pos)
+	  )))
     (format t "vbox_pos: ~A~%" wall_box_pos)
     (format t "~%")
     wall_box_pos)

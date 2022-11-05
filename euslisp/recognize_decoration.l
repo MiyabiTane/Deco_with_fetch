@@ -5,7 +5,8 @@
 (setq *center-ydiff* 150)
 
 (defun find-boxes ()
-  (let* ((box_msg) (box_coords) (box_x) (box_y) (box_z) (bboxes_msg))
+  (let* ((box_msg) (box_coords_dims) (box_coords) (box_dims)
+	 (box_x) (box_y) (box_z) (bboxes_msg))
     (setq *bboxes* '())
     (ros::duration-sleep 1.0)
     (setq bboxes_msg (one-shot-subscribe *bounding-box-list*
@@ -13,13 +14,16 @@
 					 :after-stamp (ros::time-now)))
     (dotimes (i (length (send bboxes_msg :boxes)))
       (setq box_msg (elt (send bboxes_msg :boxes) i))
-      (setq box_coords (elt (bbox->lst box_msg) 0))
+      (setq box_coords_dims (bbox->lst box_msg))
+      (setq box_coords (elt box_coords_dims 0))
+      (setq box_dims (elt box_coords_dims 1))
       (setq box_x (elt (send box_coords :pos) 0))
       (setq box_y (elt (send box_coords :pos) 1))
       (setq box_z (elt (send box_coords :pos) 2))
       ;; ignore box on the floor
       (format t "box pos: ~A~%" (send box_coords :pos))
-      (if (and (and (> box_z 500) (< (abs box_y) 1000)) (< box_x 1300))
+      (if (and (and (and (> box_z 500) (< (abs box_y) 1000)) (< box_x 1300))
+	       (> (* (elt box_dims 0) (elt box_dims 1)) 5000)) ;; too small
 	  (setq *bboxes* (append *bboxes* (list box_msg)))
 	))
     (when (> (length *bboxes*) 0)
@@ -142,7 +146,7 @@
       (send-robot 1000)
       (find-boxes)
       (format t "find ~A boxes, look at: ~A~%" (length *bboxes*) (v- look_at_pos #f(150 0 0)))
-      (when (or (< (length *bboxes*) deco_count) (< (get-decoration-x) 900))
+      (when (or (< (length *bboxes*) deco_count) (< (get-decoration-x) 800))
 	(go-vel-linear (/ -150 1000.0) 1)
 	(setq *close-deco-x* (- *close-deco-x* 150))
 	(send *fetch* :head :look-at look_at_pos)

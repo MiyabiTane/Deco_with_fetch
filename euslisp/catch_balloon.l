@@ -1,6 +1,6 @@
 #!/usr/bin/env roseus
 
-(setq *CATCH-BALLOON-TH* 0.2)
+(setq *CATCH-BALLOON-TH* 0.05)
 
 (defun get-closest-box ()
   (let* ((pos) (xpos_lst '()) (closest_x) (closest_num 0) (center_box_info))
@@ -44,7 +44,7 @@
   (inv-from-reset-pose #f(550 100 500))
   (send *fetch* :rarm :wrist-r :joint-angle -34.22)
   ;; (send-robot 4000)
-  (send *ri* :stop-grasp)
+  ;; (send *ri* :stop-grasp)
   ;; arm_end_pos #f(550.048 100.282 500.078)
   )
 
@@ -64,15 +64,15 @@
       (format t "ideal: ~A, real: ~A~%" ideal_width real_width)
       (format t "diff_width: ~A~%" diff_width)
       )
-    (when (and (< real_width 0.01) (< retry_count 1)) ;; ask for help from human
+    (when (and (< real_width 0.01) (< retry_count 2)) ;; ask for help from human
       (send *ri* :stop-grasp)
       (format t "風船を掴むのに失敗しました~%")
-      (send *ri* :speak-jp "風船を掴めませんでした。渡してもらえませんか？")
+      (send *ri* :speak-jp "風船を掴めませんでした。もう一度渡してもらえますか？")
       (send *fetch* :rarm :move-end-pos #f(0 0 100) :world)
       (send-robot 1000)
       (ros::duration-sleep 7)
       (catch-balloon-manip *CATCH-BALLOON-TH* 1))
-    real_width)
+    ideal_width)
   )
 
 (defun before-push-pose ()
@@ -112,6 +112,7 @@
     (go-vel-linear (/ -150 1000.0) 1)
     (setq *close-deco-x* (- *close-deco-x* 150))
     (setq cbox_pos (v+ cbox_pos #f(150 0 0)))
+    (send *ri* :stop-grasp)
     (set-before-catch-pose)
     (setq arm_end_pos (get-arm-end-pos))
     (send *fetch* :torso :waist-z :joint-angle
@@ -138,10 +139,11 @@
   (let* ((wall_x)
 	 (leave_x (* -1 *close-deco-x*))
 	 (hand_width hand_width))
+    (go-vel-linear (/ -200 1000.0) 1)
     (set-before-catch-pose)
-    (send *ri* :go-grasp :pos hand_width)
     (send-robot 4000)
     (before-push-pose)
+    (setq leave_x (+ leave_x 200))
     (format t "leave_x: ~A~%" leave_x)
     (go-vel-linear (/ leave_x 1000.0) 1)
     (format t "rot_num: ~A~%" *find-rot-num*)
@@ -160,6 +162,6 @@
 	 (hand_width))
     (setq *catch-box-num* (elt cbox_num_pos 0))
     (before-catch cbox_pos)
-    (setq hand_width (catch-balloon-manip *CATCH-BALLOON-TH* 1))
+    (setq hand_width (catch-balloon-manip *CATCH-BALLOON-TH* 0))
     (after-catch hand_width)
     ))

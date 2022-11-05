@@ -4,7 +4,7 @@
   (setq *CATCH-BALLOON-TH* 0.05)  ;; 指の開き具合のずれ
 
   (setq *PLACE-POS-OFFSET* #f(1000 -200.6 0))
-  (setq *PUSH-X-OFFSET* 0)  ;;400)  ;; 押す前に壁に近づく距離
+  ;; (setq *PUSH-X-OFFSET* 0)  ;;400)  ;; 押す前に壁に近づく距離
   
   (setq *PUSH-TH-1* 0.2)  ;; 腕の位置のずれ
   (setq *PUSH-TH-2* 3.0)  ;; 5.0)  ;; 壁との距離
@@ -75,19 +75,19 @@
 
   ;; set goal_pos
   (setq *wall-x* (get-distance-wall 320 240))
-  (setq place_pos (float-vector *wall-x* -700 1000))
+  (setq place_pos (float-vector *wall-x* -500 1000))
   (format t "place_pos: ~A~%" place_pos)
 
   (set-before-catch-pose)
   (send-robot 4000)
   (send *ri* :speak-jp "風船を渡して下さい")
   (ros::duration-sleep 5.0)
-  (catch-balloon-manip *CATCH-BALLOON-TH* 1)
+  (catch-balloon-manip *CATCH-BALLOON-TH* 2)
   (before-push-pose)
 
   (setq close_len_rot (place-balloon-manip place_pos))
   (repush-balloon)
-  (go-back (elt close_len_rot 0) (elt close_len_rot 1))
+  (go-back (elt close_len_rot 0) (elt close_len_rot 1) (elt close_len_rot 2))
   ;; (go-vel-linear (/ -100 1000.0) 1)
   )
 
