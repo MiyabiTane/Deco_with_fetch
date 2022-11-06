@@ -3,11 +3,12 @@
 (defun set-param-real ()
   (setq *CATCH-BALLOON-TH* 0.05)  ;; 指の開き具合のずれ
 
-  (setq *PLACE-POS-OFFSET* #f(1000 -200.6 0))
+  ;; (setq *PLACE-POS-OFFSET* #f(1000 -200.6 0))
+  (setq *PLACE-POS-OFFSET* #f(1000.0 -400.0 0.0))
   ;; (setq *PUSH-X-OFFSET* 0)  ;;400)  ;; 押す前に壁に近づく距離
   
   (setq *PUSH-TH-1* 0.2)  ;; 腕の位置のずれ
-  (setq *PUSH-TH-2* 3.0)  ;; 5.0)  ;; 壁との距離
+  (setq *PUSH-TH-2* 5.0)  ;; 5.0)  ;; 壁との距離
   )
 
 (defun set-catch-pos-lst ()
@@ -78,6 +79,8 @@
   (setq place_pos (float-vector *wall-x* -500 1000))
   (format t "place_pos: ~A~%" place_pos)
 
+  (rotate-ref-wall 0.0 (deg2rad 15))
+
   (set-before-catch-pose)
   (send-robot 4000)
   (send *ri* :speak-jp "風船を渡して下さい")
@@ -87,7 +90,7 @@
 
   (setq close_len_rot (place-balloon-manip place_pos))
   (repush-balloon)
-  (go-back (elt close_len_rot 0) (elt close_len_rot 1) (elt close_len_rot 2))
+  (go-back (elt close_len_rot 0) (elt close_len_rot 1) (elt close_len_rot 2) (elt close_len_rot 3))
   ;; (go-vel-linear (/ -100 1000.0) 1)
   )
 

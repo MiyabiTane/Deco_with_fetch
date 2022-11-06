@@ -10,9 +10,9 @@ from copy import deepcopy
 from collections import deque
 from scipy.spatial import distance
 
-TH = 150
 ALPHA = 0
-TEMP_TH = 0.9
+DIFF_TH = 50
+SIZE_TH = 3000
 INPUT_NAME = "share/pix2pix_input.jpg"
 OUTPUT_PATH = "share/pix2pix_output"
 DIR_PATH = roslib.packages.get_pkg_dir('deco_with_fetch') + "/scripts/"
@@ -34,14 +34,7 @@ def think_with_trained_pix2pix(input_img, called_count):
     return output_img
 
 
-def remove_dup_deco(back_img, called_count):
-
-    def visualize(back_img, deco_pos):
-        output_back_img = deepcopy(back_img)
-        for lx, ly, rx, ry in deco_pos:
-            cv2.rectangle(output_back_img, (lx, ly), (rx, ry), (255, 0, 0), thickness=2, lineType=cv2.LINE_4)
-        cv2.imwrite(DIR_PATH + "images/" + str(called_count) + "/matching_res.jpg", output_back_img)
-
+def remove_dup_deco(init_img, back_img, called_count):
     def check_dup(d_lx, d_ly, d_rx, d_ry, decorated_pos):
         for lx, ly, rx, ry in decorated_pos:
             y_len = min(ry, d_ry) - max(ly, d_ly)
@@ -52,23 +45,35 @@ def remove_dup_deco(back_img, called_count):
                     return True
         return False
 
+    def get_diff_img(before_img, after_img, k_size=5, k_size2=5):
+        im_diff = before_img.astype(int) - after_img.astype(int)
+        im_diff_abs = np.abs(im_diff)
+        im_diff_img = im_diff_abs.astype(np.uint8)
+        im_diff_img[np.where(im_diff_abs[:,:,0] < DIFF_TH) and np.where(im_diff_abs[:,:,1] < DIFF_TH) and np.where(im_diff_abs[:,:,2] < DIFF_TH)] = [0, 0, 0]
+        img_gray = cv2.cvtColor(im_diff_img, cv2.COLOR_BGR2GRAY)
+        _, img_binary = cv2.threshold(img_gray, 1, 255, cv2.THRESH_BINARY)
+        # remove noise
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(k_size,k_size))
+        kernel2 = cv2.getStructuringElement(cv2.MORPH_RECT,(k_size2,k_size2))
+        img_opening = cv2.morphologyEx(img_binary, cv2.MORPH_OPEN, kernel)
+        img_closing = cv2.morphologyEx(img_opening, cv2.MORPH_CLOSE, kernel2)
+        return img_closing
+
     # 2回目以降の飾り付け生成では既に飾りがあるところに置かないようにする
-    deco_files = []
-    for i in range(called_count + 1):
-        files = glob.glob(DIR_PATH + "images/" + str(called_count) + "/input*.jpg")
-        deco_files += files
     decorated_pos = []
-    for i, fi in enumerate(deco_files):
-        img = cv2.imread(fi)
-        res = cv2.matchTemplate(back_img, img, cv2.TM_CCOEFF_NORMED)
-        _min_val, max_val, _min_loc, max_loc = cv2.minMaxLoc(res)
-        if max_val > TEMP_TH:
-            H, W, _ = img.shape
-            lx, ly = max_loc
-            rx, ry = lx + W, ly + H
+    diff_img = get_diff_img(init_img, back_img)
+    contours, _hierarchy = cv2.findContours(diff_img ,cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    for cnt in contours:
+        if cv2.contourArea(cnt) > SIZE_TH:
+            lx, ly, w, h = cv2.boundingRect(cnt)
+            rx, ry = lx + w, ly + h
             if not check_dup(lx, ly, rx, ry, decorated_pos):
-                decorated_pos.append((lx, ly, rx, ry))
-    visualize(back_img, decorated_pos)
+                decorated_pos.append((int(lx), int(ly), int(rx), int(ry)))
+    # debug
+    for lx, ly, rx, ry in decorated_pos:
+        cv2.rectangle(diff_img, (lx, ly), (rx, ry), (255, 0, 0), thickness=2, lineType=cv2.LINE_4)
+    cv2.imwrite(DIR_PATH + "images/" + str(called_count) + "/decorated_pos.jpg", diff_img)
+
     return decorated_pos
 
 

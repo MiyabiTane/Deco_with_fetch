@@ -61,7 +61,8 @@ class ThinkDecorationNode:
         # cv2.imwrite(self.dir_path + "/share/input.png", self.input_img)
         # cv2.imwrite(self.dir_path + "/share/output.png", self.output_img)
         # think placement of decorations
-        decorated_pos = remove_dup_deco(self.input_img, self.called_count)
+        init_img = cv2.imread(self.dir_path + "/images/0/back_img.jpg")
+        decorated_pos = remove_dup_deco(init_img, self.input_img, self.called_count)
         not_wall_pos = [(0, 0, int(req.bimg_lt_uv.x), 480), (0, 0, 640, int(req.bimg_lt_uv.y)),
                         (int(req.bimg_rb_uv.x), 0, 640, 480), (0, int(req.bimg_rb_uv.y), 640, 480)]
         think_deco = ThinkDecoration(self.deco_imgs, self.deco_masks, self.input_img, self.output_img,
