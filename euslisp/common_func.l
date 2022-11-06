@@ -1,7 +1,7 @@
 #!/usr/bin/env roseus
 
 (setq *rotate-thresh* (deg2rad 10))
-(setq *wall-rotate-rad* (deg2rad 20))
+(setq *wall-rotate-rad* (deg2rad 10))
 
 (defvar *sp-screenpoint-pub-topic* "/screen_point/input/screenpoint")
 (defvar *sp-points-pub-topic* "/screen_point/input/points")

@@ -12,7 +12,7 @@ from scipy.spatial import distance
 
 ALPHA = 0
 DIFF_TH = 50
-SIZE_TH = 3000
+SIZE_TH = 1000
 INPUT_NAME = "share/pix2pix_input.jpg"
 OUTPUT_PATH = "share/pix2pix_output"
 DIR_PATH = roslib.packages.get_pkg_dir('deco_with_fetch') + "/scripts/"

@@ -76,7 +76,7 @@
 
   ;; set goal_pos
   (setq *wall-x* (get-distance-wall 320 240))
-  (setq place_pos (float-vector *wall-x* -500 1000))
+  (setq place_pos (float-vector *wall-x* 500 1000))
   (format t "place_pos: ~A~%" place_pos)
 
   (rotate-ref-wall 0.0 (deg2rad 15))

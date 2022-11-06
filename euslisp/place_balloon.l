@@ -1,11 +1,11 @@
 #!/usr/bin/env roseus
 
-(setq *PLACE-POS-OFFSET* #f(1000.0 -580.0 0))  ;; #f(1000 -313.6 0))
+(setq *PLACE-POS-OFFSET* #f(1000.0 -313.0 0))  ;; #f(1000 -313.6 0))
 
 (setq *PUSH-TH-1* 0.2)
 (setq *PUSH-TH-2* 5.0)  ;; 10.0
 
-(defun push-balloon (thresh1 thresh2 max_count)
+(defun push-balloon (thresh1 thresh2 push_x max_count)
   ;; thresh: diff between ideal and real [mm]
   (let* ((diff_x 0)
 	 (real_x (elt (get-arm-end-pos) 0))
@@ -13,13 +13,14 @@
 	 (diff_wall_x 0)
 	 (init_wall_x (get-distance-wall 320 240))
 	 (real_wall_x init_wall_x)
-	 (try_count 0))
+	 (try_count 0)
+	 (push_x push_x))
     ;; (look-at-wall)
     (while (and (and (< diff_x thresh1) (< diff_wall_x thresh2))
 		(< try_count max_count))
-      (send *fetch* :rarm :move-end-pos #f(25 0 0) :world)
+      (send *fetch* :rarm :move-end-pos (float-vector push_x 0 0) :world)
       (send-robot 1000)
-      (setq ideal_x (+ ideal_x 25))
+      (setq ideal_x (+ ideal_x push_x))
       (setq real_x (elt (get-arm-end-pos) 0))
       (setq diff_x (- ideal_x real_x))
       (format t "diff_x: ~A~%" diff_x)
@@ -82,7 +83,9 @@
     (format t "rarm_up: ~A~%" rarm_up)
     (send *fetch* :rarm :move-end-pos (float-vector 50 0 rarm_up) :world)
     (send-robot 3000)
-    (push-balloon *PUSH-TH-1* *PUSH-TH-2* 30)
+    (send *fetch* :rarm :move-end-pos #f(50 0 0) :world)
+    (send-robot 1000)
+    (push-balloon *PUSH-TH-1* *PUSH-TH-2* 20 15)
     (format t "finish push~%")
     (send *ri* :stop-grasp)
     (send *fetch* :rarm :move-end-pos #f(-20 0 0) :world)
@@ -99,10 +102,10 @@
   (send-robot 2000)
   (send *fetch* :rarm :move-end-pos #f(50 0 0) :world)
   (send-robot 2000)
-  (push-balloon *PUSH-TH-1* *PUSH-TH-2* 5)
+  (push-balloon *PUSH-TH-1* *PUSH-TH-2* 20 4)
   (send *fetch* :rarm :move-end-pos #f(-100 0 0) :world)
   (send-robot 2000)
-  (send *fetch* :rarm :move-end-pos #f(-100 0 0) :world)
+  (send *fetch* :rarm :move-end-pos #f(-50 0 0) :world)
   (send-robot 2000)
   )
 
@@ -110,7 +113,7 @@
   (let* ((move_len (* -1 move_len))
 	 (move_rot move_rot)
 	 (wall_x)
-	 (leave_go_x (* -1 push_go_x))
+	 (leave_go_x (min 0 (+ (* -1 push_go_x) 50)))
 	 (leave_rotate (* -1 push_rotate)))
     (go-vel-rotate leave_rotate)
     (send *fetch* :head :look-at *look-at-pos*)
@@ -120,6 +123,8 @@
     (format t "move_len: ~A, move_rot: ~A~%" move_len (rad2deg move_rot))
     ;; (before-push-pose)
     ;; (make-reset-pose)
+    ;; (if (> move_rot 50)  ;; to move demo more correct
+    ;;	(setq move_len (- move_len 100)))
     (go-vel-rotate move_rot)
     (rotate-ref-wall move_rot (deg2rad 5))
     (go-vel-linear (/ move_len 1000.0) 2)
