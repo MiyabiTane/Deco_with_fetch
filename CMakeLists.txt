@@ -3,11 +3,15 @@ project(deco_with_fetch)
 
 find_package(catkin REQUIRED COMPONENTS std_msgs geometry_msgs sensor_msgs jsk_recognition_msgs message_generation)
 
+add_message_files(DIRECTORY msg FILES
+  InstructInfo.msg
+  )
+
 add_service_files(DIRECTORY srv FILES
   DecoImgs.srv
   DecoStatus.srv
   PointStamped.srv
-)
+  )
 
 generate_messages(
   DEPENDENCIES

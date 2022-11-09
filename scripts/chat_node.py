@@ -6,9 +6,12 @@ import sys
 import json
 import requests
 
+from instruct_human_to_robot import InstructChat
+
 from speech_recognition_msgs.msg import SpeechRecognitionCandidates
 from sound_play.msg import SoundRequestAction, SoundRequestGoal
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool
+from deco_with_fetch.msg import InstructInfo
 
 if sys.version_info.major == 2:
     reload(sys)
@@ -31,8 +34,13 @@ class ChatNode(object):
         self.uid = ""
         self.set_mebo_param()
 
+        self.instruct_flag = False
+        self.instruct_chat = InstructChat()
+
         rospy.Subscriber("/speech_to_text", SpeechRecognitionCandidates, self.chat_cb)
+        rospy.Subscriber("/instruct_flag", Bool, self.flag_cb)
         self.pub = rospy.Publisher("/text", String, queue_size=1)
+        self.pub_instruct = rospy.Publisher("/instruct_info", InstructInfo, queue_size=1)
         self.actionlib_client = actionlib.SimpleActionClient('/robotsound_jp', SoundRequestAction)
         self.actionlib_client.wait_for_server()
 
@@ -66,20 +74,49 @@ class ChatNode(object):
         if msg.transcript:
             for char in msg.transcript:
                 listen_text += char
-        best_response = self.make_chat_response(listen_text)
-        # Publish for eyebrows expression
-        pub_msg = String()
-        pub_msg.data = best_response
-        self.pub.publish(pub_msg)
-        # Speak
-        speak_msg = SoundRequestGoal()
-        speak_msg.sound_request.volume = self.volume
-        speak_msg.sound_request.command = self.command
-        speak_msg.sound_request.sound = self.sound
-        speak_msg.sound_request.arg = best_response
-        speak_msg.sound_request.arg2 = self.arg2
-        self.actionlib_client.send_goal(speak_msg)
 
+        instruct_msg = InstructInfo()
+        best_response = "雑談"
+        if self.instruct_flag:
+            move_left, move_right, move_up, move_down, degree, best_response, count = self.instruct_chat.instuct_main(listen_text)
+            if best_response == "終了":
+                best_response = "雑談"
+            else:
+                # Publish info of which to move
+                instruct_msg.called_count = count
+                instruct_msg.message = best_response
+                instruct_msg.move_up = move_up
+                instruct_msg.move_down = move_down
+                instruct_msg.move_left = move_left
+                instruct_msg.move_right = move_right
+                instruct_msg.move_degree = degree
+                if best_response == "代わりに置いてもらえますか？":
+                    instruct_msg.is_finish = True
+                else:
+                    instruct_msg.is_finish = False
+                self.pub_instruct.publish(instruct_msg)
+
+        if best_response == "雑談":
+            # Instruct
+            instruct_msg.is_finish = True
+            self.pub_instruct.publish(instruct_msg)
+
+            best_response = self.make_chat_response(listen_text)
+            # Publish for eyebrows expression
+            pub_msg = String()
+            pub_msg.data = best_response
+            self.pub.publish(pub_msg)
+            # Speak
+            speak_msg = SoundRequestGoal()
+            speak_msg.sound_request.volume = self.volume
+            speak_msg.sound_request.command = self.command
+            speak_msg.sound_request.sound = self.sound
+            speak_msg.sound_request.arg = best_response
+            speak_msg.sound_request.arg2 = self.arg2
+            self.actionlib_client.send_goal(speak_msg)
+
+    def flag_cb(self, msg):
+        self.instruct_flag = msg.data
 
 if __name__ == '__main__':
     rospy.init_node("chat_node")
