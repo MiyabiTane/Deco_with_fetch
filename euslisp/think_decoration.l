@@ -1,6 +1,5 @@
 #!/usr/bin/env roseus
 
-(setq *xyz-uv-req-topic* "/xyz_to_screen_point")
 (setq *deco-req-topic* "/think_deco")
 
 (defun debug-view-place-pos (i)
@@ -10,26 +9,9 @@
     (objects (list *fetch* box))
     ))
 
-(defun convert-3D->2D (xyz_lst)
-  ;; *base-frame* 3D pos -> *camera-frame* 2D pos
-  (let* ((xyz_req_msg (instance deco_with_fetch::PointStampedRequest :init))
-	 (x (elt xyz_lst 0)) (y (elt xyz_lst 1)) (z (elt xyz_lst 2))
-	 (input_coords (make-coords :pos (float-vector x y z)))
-	 (pos) (coords) (result_msg))
-    (setq coords (send (send *tfl* :lookup-transform
-			     *camera-frame* *base-frame* (ros::time 0))
-		       :transform input_coords))
-    (setq pos (send coords :pos))
-    (send (send xyz_req_msg :point) :x (elt pos 0))
-    (send (send xyz_req_msg :point) :y (elt pos 1))
-    (send (send xyz_req_msg :point) :z (elt pos 2))
-    (ros::wait-for-service *xyz-uv-req-topic*)
-    (setq result_msg (ros::service-call *xyz-uv-req-topic* xyz_req_msg))
-    result_msg)
-  )
-
 (defun get-corner-uv (pos dims)
   (let* ((lt_pos) (rt_pos) (lb_pos) (rb_pos)
+	 (lt_res) (rt_res) (lb_res) (rb_res)
 	 (h_width (/ (elt dims 1) 2.0))
 	 (h_length (/ (elt dims 0) 2.0))
 	 (h_height (/ (elt dims 2) 2.0)))

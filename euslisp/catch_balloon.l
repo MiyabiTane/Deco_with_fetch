@@ -92,6 +92,7 @@
   )
 
 (defun catch-interact ()
+  (switch-chat-mode t)
   (format t "その風船を渡して下さい~%")
   (send *ri* :speak-jp "その風船を渡してくれませんか？渡し終わったら声をかけてくださいね")
   (setq listen_flag 0)
@@ -103,6 +104,7 @@
   (ros::unsubscribe "/speech_to_text")
   (format t "ありがとうございます~%")
   (send *ri* :speak-jp "ありがとうございます")
+  (switch-chat-mode nil)
   )
 
 (defun before-catch (cbox_pos)

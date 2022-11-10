@@ -11,6 +11,8 @@
 (defvar *flag-pub-topic* "/instruct_flag")
 (defvar *eyebrows-pub-topic* "/eyebrows_expression/input")
 
+(setq *xyz-uv-req-topic* "/xyz_to_screen_point")
+
 (ros::advertise *sp-screenpoint-pub-topic* geometry_msgs::PointStamped 1)
 (ros::advertise *sp-points-pub-topic* sensor_msgs::PointCloud2 1)
 (ros::advertise *flag-pub-topic* std_msgs::Bool 1)
@@ -240,6 +242,24 @@
 	 (pos (send coords :pos))
 	 (dims (ros::tf-point->pos (send bbox :dimensions))))
     (list coords dims))
+  )
+
+(defun convert-3D->2D (xyz_lst)
+  ;; *base-frame* 3D pos -> *camera-frame* 2D pos
+  (let* ((xyz_req_msg (instance deco_with_fetch::PointStampedRequest :init))
+	 (x (elt xyz_lst 0)) (y (elt xyz_lst 1)) (z (elt xyz_lst 2))
+	 (input_coords (make-coords :pos (float-vector x y z)))
+	 (pos) (coords) (result_msg))
+    (setq coords (send (send *tfl* :lookup-transform
+			     *camera-frame* *base-frame* (ros::time 0))
+		       :transform input_coords))
+    (setq pos (send coords :pos))
+    (send (send xyz_req_msg :point) :x (elt pos 0))
+    (send (send xyz_req_msg :point) :y (elt pos 1))
+    (send (send xyz_req_msg :point) :z (elt pos 2))
+    (ros::wait-for-service *xyz-uv-req-topic*)
+    (setq result_msg (ros::service-call *xyz-uv-req-topic* xyz_req_msg))
+    result_msg)
   )
 
 (defun inv-from-reset-pose (target_pos)

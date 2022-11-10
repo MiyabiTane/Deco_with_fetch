@@ -62,10 +62,12 @@ class ChatNode(object):
         response = requests.post(self.url, headers=self.headers, data=input_data, timeout=(3.0, 7.5))
         response_json = response.json()
         if 'bestResponse' not in response_json:
-            best_response = "ごめんなさい、よくわからないです"
+            best_response = "ごめんなさい、聞き取れませんでした"
         else:
             best_response = response_json['bestResponse']['utterance']
         rospy.loginfo("mebo output: {}".format(best_response))
+        if "応答の取得に失敗しました" in best_response:
+            best_response = "ごめんなさい、聞き取れませんでした"
         return best_response
 
     def chat_cb(self, msg):

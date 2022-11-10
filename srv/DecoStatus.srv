@@ -1,6 +1,7 @@
 std_msgs/Header header
 int64 deco_count
 int64 box_num
+jsk_recognition_msgs/PlotData[] decos_rec_uv
 sensor_msgs/Image back_img
 ---
 geometry_msgs/Point[] real_deco_uv
