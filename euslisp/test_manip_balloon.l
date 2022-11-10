@@ -69,7 +69,7 @@
   ))
 
 (defun place-balloon-real ()
-  (set-param-real)
+  ;; (set-param-real)
   (init-global-param)
   (make-reset-pose)
   (send *ri* :stop-grasp)
@@ -89,8 +89,7 @@
   (before-push-pose)
 
   (setq close_len_rot (place-balloon-manip place_pos))
-  (repush-balloon)
+  (if (not *pass-to-human-flag*)
+      (repush-balloon))
   (go-back (elt close_len_rot 0) (elt close_len_rot 1) (elt close_len_rot 2) (elt close_len_rot 3))
-  ;; (go-vel-linear (/ -100 1000.0) 1)
   )
-

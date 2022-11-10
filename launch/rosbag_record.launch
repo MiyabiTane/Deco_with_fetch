@@ -42,6 +42,7 @@
           /speech_to_text
           /dialog_response
           /eyebrows_expression/input
+          /text
           $(arg other_topics)
           $(arg regex_flag)
           $(arg other_options)"

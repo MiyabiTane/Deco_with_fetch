@@ -46,6 +46,10 @@
   (setq *catch-pos-lst* '())
   (setq *close-deco-x* 0)  ;; to go-back default position
   (setq *catch-box-num* 0)
+  (setq *pass-to-human-flag* nil)
+  (setq *instruct-msg* (instance deco_with_fetch::InstructInfo :init))
+  (send *instruct-msg* :called_count -1)
+  (send *instruct-msg* :is_finish t)
   )
 
 ;; load files
@@ -56,6 +60,7 @@
 (load "catch_balloon.l")
 (load "place_balloon.l")
 (load "check_decoration.l")
+(load "interact_with_human.l")
 
 (load "test_manip_balloon.l")
 

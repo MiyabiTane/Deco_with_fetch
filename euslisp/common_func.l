@@ -7,9 +7,14 @@
 (defvar *sp-points-pub-topic* "/screen_point/input/points")
 (defvar *sp-sub-topic* "/pointcloud_screenpoint_nodelet/output_point")
 (defvar *plane-norm-sub-topic* "/plane_normal_vector/output")
+(defvar *interact-sub-topic* "/instruct_info")
+(defvar *flag-pub-topic* "/instruct_flag")
+(defvar *eyebrows-pub-topic* "/eyebrows_expression/input")
 
 (ros::advertise *sp-screenpoint-pub-topic* geometry_msgs::PointStamped 1)
 (ros::advertise *sp-points-pub-topic* sensor_msgs::PointCloud2 1)
+(ros::advertise *flag-pub-topic* std_msgs::Bool 1)
+(ros::advertise *eyebrows-pub-topic* std_msgs::Int32 1)
 (ros::rate 10)
 
 (defun send-robot (wait_time)
@@ -267,3 +272,24 @@
     (send vbox :locate pos :world)
     (objects (list *fetch* vbox))
   ))
+
+(defun instruct-cb (msg)
+  (let* ((count) (message) (flag))
+    (setq *instruct-msg* msg)
+    (setq count (send *instruct-msg* :called_count))
+    (setq message (send *instruct-msg* :message))
+    (setq flag (send *instruct-msg* :is_finish))
+    (format t "~A: ~A ~A~%" count message flag)
+    ))
+
+(defun switch-chat-mode (bool_flag)  ;; true: instruct mode
+  (let* ((pub_msg (instance std_msgs::Bool :init)))
+    (send pub_msg :data bool_flag)
+    (ros::publish *flag-pub-topic* pub_msg)
+    ))
+
+(defun publish-eyebrows-expression (pub_int)
+  (let* ((pub_msg (instance std_msgs::Int32 :init)))
+    (send pub_msg :data pub_int)
+    (ros::publish *eyebrows-pub-topic* pub_msg)
+    ))
