@@ -43,6 +43,7 @@
   (setq *wall-x* nil)
   (setq *bboxes* '())
   (setq *place-pos-lst* '())
+  (setq *place-uv-pos-lst* '())
   (setq *catch-pos-lst* '())
   (setq *close-deco-x* 0)  ;; to go-back default position
   (setq *catch-box-num* 0)
@@ -50,6 +51,7 @@
   (setq *instruct-msg* (instance deco_with_fetch::InstructInfo :init))
   (send *instruct-msg* :called_count -1)
   (send *instruct-msg* :is_finish t)
+  (setq *deco-result-lst* '())
   )
 
 ;; load files

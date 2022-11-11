@@ -71,7 +71,7 @@
       (send *fetch* :rarm :move-end-pos #f(0 0 100) :world)
       (send-robot 1000)
       (ros::duration-sleep 7)
-      (catch-balloon-manip *CATCH-BALLOON-TH* 1))
+      (catch-balloon-manip *CATCH-BALLOON-TH* (+ retry_count 1)))
     ideal_width)
   )
 

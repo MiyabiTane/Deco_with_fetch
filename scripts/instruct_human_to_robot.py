@@ -191,7 +191,7 @@ class InstructChat(object):
         word_pos = self.lemma_lst.index(word)
         for syntax in self.syntaxes:
             if syntax.dependency_edge == word_pos:
-                if syntax.parse_label == 25:
+                if syntax.parse_label == 25 or syntax.name in ["ない", "じゃない", "じゃなく"]:
                     return True
         return False
 

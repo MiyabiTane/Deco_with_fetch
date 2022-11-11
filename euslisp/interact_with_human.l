@@ -81,8 +81,7 @@
       (publish-eyebrows-expression 5)
       (send *ri* :speak-jp "すみません、風船を渡すので代わりに置いてもらえませんか？")
       (send *ri* :speak-jp "一度下がってから風船を渡しますね")
-      (setq *pass-to-human-flag* t)
-      ;; (pass-decoration place_move_rot))
+      (setq *pass-to-human-flag* t))
     (switch-chat-mode nil)
     ))
 

@@ -28,6 +28,7 @@ class CheckDecoStatus:
         print("- deco_count: {}".format(req.deco_count))
         print("- box_num: {}".format(req.box_num))
         print("- decos_rec_uv: {}".format(np.array(req.decos_rec_uv)))
+        print("- ga_calc_uv: {}".format(np.array(req.ga_calc_uv)))
 
 if __name__ == '__main__':
     rospy.init_node("check_deco_status")

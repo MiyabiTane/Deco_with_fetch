@@ -70,6 +70,7 @@
       (setq x (send (send (elt result_arr i) :position) :x))
       (setq y (send (send (elt result_arr i) :position) :y))
       (format t "x: ~A, y: ~A~%" x y)
+      (setq *place-uv-pos-lst* (append *place-uv-pos-lst* (list (list x y))))
       ;; use point_cloud of wall
       (setq result_3d_pos nil)
       (while (not result_3d_pos)
