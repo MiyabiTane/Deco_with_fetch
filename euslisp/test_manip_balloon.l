@@ -76,7 +76,7 @@
 
   ;; set goal_pos
   (setq *wall-x* (get-distance-wall 320 240))
-  (setq place_pos (float-vector *wall-x* 500 1000))
+  (setq place_pos (float-vector *wall-x* -200 1000))
   (format t "place_pos: ~A~%" place_pos)
 
   (rotate-ref-wall 0.0 (deg2rad 15))
@@ -85,7 +85,7 @@
   (send-robot 4000)
   (send *ri* :speak-jp "風船を渡して下さい")
   (ros::duration-sleep 5.0)
-  (catch-balloon-manip *CATCH-BALLOON-TH* 2)
+  (catch-balloon-manip *CATCH-BALLOON-TH* 0)
   (before-push-pose)
 
   (setq close_len_rot (place-balloon-manip place_pos))

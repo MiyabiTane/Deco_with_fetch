@@ -105,7 +105,7 @@ class InstructChat(object):
         if response:
             return response
         # 曖昧方向指示
-        for indicator_direction in self.indicator_direction:
+        for indicator_direction in self.indicator_direction + self.place:
             if indicator_direction in input_sentence:
                 self.called_count = -1
                 return "代わりに置いてもらえますか？"

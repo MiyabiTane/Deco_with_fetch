@@ -6,7 +6,7 @@ from speech_recognition_msgs.msg import SpeechRecognitionCandidates
 from dialogflow_task_executive.msg import DialogResponse
 from std_msgs.msg import Int32
 
-CONFIDENCE_TH = 0.6
+CONFIDENCE_TH = 0.5
 
 class EyebrowsTopicRelay(object):
     def __init__(self):

@@ -23,8 +23,9 @@
 		(< try_count max_count))
       (when (not (send *instruct-msg* :is_finish))
 	(ros::unsubscribe *interact-sub-topic*)
-	(setq try_count (+ max_count 1))
-	(interact-human-to-robot))
+	(interact-human-to-robot)
+	(when *pass-to-human-flag*
+	  (setq try_count (+ max_count 1))))
       (when (not *pass-to-human-flag*)
 	(send *fetch* :rarm :move-end-pos (float-vector push_x 0 0) :world)
 	(send-robot 1000)

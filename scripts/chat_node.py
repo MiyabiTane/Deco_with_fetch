@@ -9,7 +9,7 @@ import requests
 from instruct_human_to_robot import InstructChat
 
 from speech_recognition_msgs.msg import SpeechRecognitionCandidates
-from sound_play.msg import SoundRequestAction, SoundRequestGoal
+from sound_play.msg import SoundRequestAction, SoundRequestGoal, SoundRequest
 from std_msgs.msg import String, Bool
 from deco_with_fetch.msg import InstructInfo
 
@@ -41,6 +41,7 @@ class ChatNode(object):
         rospy.Subscriber("/instruct_flag", Bool, self.flag_cb)
         self.pub = rospy.Publisher("/text", String, queue_size=1)
         self.pub_instruct = rospy.Publisher("/instruct_info", InstructInfo, queue_size=1)
+        # self.pub_speak = rospy.Publisher("/robotsound_jp", SoundRequest, queue_size=1)
         self.actionlib_client = actionlib.SimpleActionClient('/robotsound_jp', SoundRequestAction)
         self.actionlib_client.wait_for_server()
 
@@ -109,6 +110,7 @@ class ChatNode(object):
             pub_msg.data = best_response
             self.pub.publish(pub_msg)
             # Speak
+            rospy.sleep(0.5)
             speak_msg = SoundRequestGoal()
             speak_msg.sound_request.volume = self.volume
             speak_msg.sound_request.command = self.command
@@ -116,6 +118,15 @@ class ChatNode(object):
             speak_msg.sound_request.arg = best_response
             speak_msg.sound_request.arg2 = self.arg2
             self.actionlib_client.send_goal(speak_msg)
+            """
+            speak_msg = SoundRequest()
+            speak_msg.sound = self.sound
+            speak_msg.command = self.command
+            speak_msg.volume = self.volume
+            speak_msg.arg = best_response
+            speak_msg.arg2 = self.arg2
+            self.pub_speak.publish(speak_msg)
+            """
 
     def flag_cb(self, msg):
         self.instruct_flag = msg.data
