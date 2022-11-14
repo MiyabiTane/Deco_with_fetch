@@ -1,6 +1,6 @@
 #!/usr/bin/env roseus
 
-(setq *PLACE-POS-OFFSET* #f(1000.0 -313.0 0))  ;; #f(1000 -313.6 0))
+(setq *PLACE-POS-OFFSET* #f(1000.0 -213.0 0))  ;; #f(1000 -313.6 0))
 
 (setq *PUSH-TH-1* 0.2)
 (setq *PUSH-TH-2* 5.0)  ;; 10.0

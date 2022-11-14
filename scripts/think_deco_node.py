@@ -78,8 +78,8 @@ class ThinkDecorationNode:
             pose_msg = Pose()
             point_msg = Point()
             quater_msg = Quaternion()
-            point_msg.x = x + w / 2
-            point_msg.y = y + l / 2
+            point_msg.x = x
+            point_msg.y = y
             point_msg.z = 0
             quater_msg.x = w
             quater_msg.y = l
