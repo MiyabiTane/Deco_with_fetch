@@ -55,7 +55,7 @@ class MakeDecoImgs(object):
         draw_point = [lt, rt, rb, lb]
         for i in range(len(draw_point)):
             n_i = 0 if i + 1 == len(xs) else i + 1
-            cv2.line(img, draw_point[i], draw_point[n_i], (255, 255, 255), thickness=1, lineType=cv2.LINE_4)
+            cv2.line(img, draw_point[i], draw_point[n_i], (255, 0, 0), thickness=2, lineType=cv2.LINE_4)
         return img
 
     def debug_draw_deco_rect(self, input_img, save_name):

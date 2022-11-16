@@ -99,6 +99,7 @@
     (format t "- decos_pos~%")
     (dolist (deco_pos decos_pos)
       (format t "  - ~A ~A ~A~%" (send deco_pos :x) (send deco_pos :y) (send deco_pos :z)))
+    (format t "- decos_dim~%")
     (dolist (deco_dims decos_dims)
       (format t "  - ~A ~A ~A~%" (send deco_dims :x) (send deco_dims :y) (send deco_dims :z)))
     (format t "- decos_rec_uv~%")

@@ -5,4 +5,4 @@ geometry_msgs/Point[] ga_calc_uv
 jsk_recognition_msgs/PlotData[] decos_rec_uv
 sensor_msgs/Image back_img
 ---
-geometry_msgs/Point[] real_deco_uv
+geometry_msgs/Point[] ideal_deco_uv

@@ -52,6 +52,7 @@
   (send *instruct-msg* :called_count -1)
   (send *instruct-msg* :is_finish t)
   (setq *deco-result-lst* '())
+  (setq *HUMAN-WILL-VAL* 0.5)  ;; 0~1
   )
 
 ;; load files
@@ -63,6 +64,7 @@
 (load "place_balloon.l")
 (load "check_decoration.l")
 (load "interact_with_human.l")
+(load "instruct_robot_to_human.l")
 
 (load "test_manip_balloon.l")
 
@@ -94,12 +96,16 @@
   (catch-balloon)
   (place-balloon)
   (check-decoration)
+  (if (<= *HUMAN-WILL-VAL* 0.5)
+      (interact-robot-to-human))
   )
 
 (defun set-sim ()
   (setq *head-camera-img* "/head_camera/rgb/image_raw")
   (setq *PUSH-X-OFFSET* 600)
-  (setq *find-rot-num* 6)
+  (setq *find-rot-num* 5)
+  (setq *rotate-thresh* (deg2rad 20))
+  (setq *wall-rotate-rad* (deg2rad 20))
   (defun go-vel-rotate (move_rad)  ;; move_rad[rad] move_time[s]
     (if (< move_rad 0)
 	(send *ri* :go-velocity 0 0 (- move_rad 0.18))
