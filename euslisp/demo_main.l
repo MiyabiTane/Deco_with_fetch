@@ -66,7 +66,7 @@
 (load "interact_with_human.l")
 (load "instruct_robot_to_human.l")
 
-(load "test_manip_balloon.l")
+;; (load "test_manip_balloon.l")
 
 (defun stop-default-mux ()
   (let* ((mux_req_msg (instance topic_tools::MuxSelectRequest :init)))
@@ -96,8 +96,8 @@
   (catch-balloon)
   (place-balloon)
   (check-decoration)
-  (if (<= *HUMAN-WILL-VAL* 0.5)
-      (interact-robot-to-human))
+  ;; (if (<= *HUMAN-WILL-VAL* 0.5)
+  ;;     (interact-robot-to-human))
   )
 
 (defun set-sim ()

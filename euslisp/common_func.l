@@ -316,7 +316,7 @@
 
 (defun find-boxes-on-wall ()
   (let* ((bboxes_msg) (box_coords_dims)
-	 (box_msg) (box_pos) (box_y) (box_z)
+	 (box_msg) (box_pos) (box_y) (box_z) (box_dims)
 	 (boxes_pos_dims_lst '()))
     (ros::duration-sleep 1.0)
     (setq *bboxes* '())
@@ -327,9 +327,11 @@
       (setq box_msg (elt (send bboxes_msg :boxes) i))
       (setq box_coords_dims (bbox->lst box_msg))
       (setq box_pos (send (elt box_coords_dims 0) :pos))
+      (setq box_dims (elt box_coords_dims 1))
       (setq box_y (elt box_pos 1))
       (setq box_z (elt box_pos 2))
-      (when (and (and (> box_y -800) (< box_y 800)) (< box_z 1700))
+      (when (and (and (and (> box_y -800) (< box_y 800)) (< box_z 1700))
+		 (and (> (elt box_dims 0) 70) (> (elt box_dims 1) 70)))
 	(format t "box_pos: ~A~%" box_pos)
 	(setq *bboxes* (append *bboxes* (list box_msg)))
 	(setq boxes_pos_dims_lst

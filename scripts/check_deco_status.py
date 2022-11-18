@@ -13,7 +13,7 @@ from deco_with_fetch.srv import DecoStatus, DecoStatusResponse
 from cv_bridge import CvBridge
 
 package_path = roslib.packages.get_pkg_dir('deco_with_fetch')
-HIST_TH = 0.5
+HIST_TH = 0.1
 
 class CheckDecoStatus:
     def __init__(self):
@@ -98,8 +98,11 @@ class CheckDecoStatus:
         for i in range(len(decos_rec_uv)):
             lt, lb, rt, rb = self.reorder_point(decos_rec_uv[i].xs, decos_rec_uv[i].ys)
             debug_decorated_img = self.debug_draw_line(debug_decorated_img, lt, lb, rt, rb)
-            decorated_img = self.result_img[min(lt[0], rt[0]): max(lb[0], rb[0]), min(lt[1], lb[1]): max(rt[1], rb[1])]
-            cv2.imwrite(self.images_dir_path + "decorated" + str(i) + ".jpg", decorated_img)
+            decorated_img = self.result_img[min(lt[1], rt[1]): max(lb[1], rb[1]), min(lt[0], lb[0]): max(rt[0], rb[0])]
+            try:
+                cv2.imwrite(self.images_dir_path + "decorated" + str(i) + ".jpg", decorated_img)
+            except:
+                print("imwrite error")
             self.decorated_imgs.append(decorated_img)
         cv2.imwrite(self.images_dir_path + "debug_decorated.jpg", debug_decorated_img)
 
@@ -136,10 +139,11 @@ class CheckDecoStatus:
         ideal_img = cv2.warpAffine(ideal_img, affin_matrix, (640, 480))
         blended_img = cv2.addWeighted(src1=result_img, alpha=0.6, src2=ideal_img, beta=0.4, gamma=0)
         for i, ans in enumerate(ans_lst):
-            pt1 = (int(sum(decos_rec_uv[i].xs) / 4.0), int(sum(decos_rec_uv[i].ys) / 4.0))
-            pt2 = (int(ans[0]), int(ans[1]))
-            print("decorated_{}: {} -> {}".format(i, pt1, pt2))
-            cv2.arrowedLine(blended_img, pt1, pt2, (0, 0, 255), thickness=2, tipLength=0.3)
+            if int(ans[0]) != -1:
+                pt1 = (int(sum(decos_rec_uv[i].xs) / 4.0), int(sum(decos_rec_uv[i].ys) / 4.0))
+                pt2 = (int(ans[0]), int(ans[1]))
+                print("decorated_{}: {} -> {}".format(i, pt1, pt2))
+                cv2.arrowedLine(blended_img, pt1, pt2, (0, 0, 255), thickness=2, tipLength=0.3)
         cv2.imwrite(self.images_dir_path + "deco_status.jpg", blended_img)
         
     def print_info(self, req):

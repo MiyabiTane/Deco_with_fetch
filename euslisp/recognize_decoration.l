@@ -21,7 +21,7 @@
       (setq box_y (elt (send box_coords :pos) 1))
       (setq box_z (elt (send box_coords :pos) 2))
       ;; ignore box on the floor
-      (when (and (and (and (> box_z 500) (< (abs box_y) 1000)) (< box_x 1300))
+      (when (and (and (and (> box_z 500) (< (abs box_y) 1000)) (< box_x 1600))
 		 (> (* (elt box_dims 0) (elt box_dims 1)) 5000)) ;; too small
 	(setq *bboxes* (append *bboxes* (list box_msg)))
 	(format t "box pos: ~A~%" (send box_coords :pos))))

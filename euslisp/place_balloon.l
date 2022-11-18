@@ -1,6 +1,6 @@
 #!/usr/bin/env roseus
 
-(setq *PLACE-POS-OFFSET* #f(1000.0 -213.0 0))  ;; #f(1000 -313.6 0))
+(setq *PLACE-POS-OFFSET* #f(1000.0 -313.6 0))  ;; #f(1000 -313.6 0))
 
 (setq *PUSH-TH-1* 0.2)
 (setq *PUSH-TH-2* 5.0)  ;; 10.0
@@ -67,7 +67,7 @@
     (format t "== place pos: ~A~%" place_pos)
     (format t "move_rot: ~A, move_len: ~A~%" (rad2deg move_rot) move_len)
     (go-vel-rotate move_rot)
-    (rotate-ref-wall move_rot (deg2rad 5))
+    (rotate-ref-wall move_rot (deg2rad 10))
     (go-vel-linear (/ move_len 1000.0) 2)
     (go-vel-rotate (* -1 move_rot))
     (setq arm_end_pos (get-arm-end-pos))
@@ -77,7 +77,7 @@
 	  (float-vector (elt arm_end_pos 0) (elt arm_end_pos 1) (elt *look-at-pos* 2)))
     (send-robot 1000)
     (ros::duration-sleep 0.5)
-    (rotate-ref-wall 0.0 (deg2rad 5))
+    (rotate-ref-wall 0.0 (deg2rad 10))
     (send *fetch* :head :look-at  ;; for rotate-ref-wall
 	  (v+ *look-at-pos* (float-vector 0 (+ (elt arm_end_pos 1) 200) 0)))
     (setq push_rotate (atan (/ (elt arm_end_pos 1) (elt arm_end_pos 0))))
@@ -119,7 +119,7 @@
   (send-robot 2000)
   (send *fetch* :rarm :move-end-pos #f(50 0 0) :world)
   (send-robot 2000)
-  (push-balloon *PUSH-TH-1* *PUSH-TH-2* 20 4)
+  (push-balloon *PUSH-TH-1* *PUSH-TH-2* 20 3)
   (send *fetch* :rarm :move-end-pos #f(-100 0 0) :world)
   (send-robot 2000)
   (send *fetch* :rarm :move-end-pos #f(-50 0 0) :world)
@@ -135,15 +135,15 @@
     (go-vel-rotate leave_rotate)
     (send *fetch* :head :look-at *look-at-pos*)
     (send-robot 1000)
-    (rotate-ref-wall 0.0 (deg2rad 5))
+    (rotate-ref-wall 0.0 (deg2rad 10))
     (go-vel-linear (/ leave_go_x 1000.0) 1)
     (format t "move_len: ~A, move_rot: ~A~%" move_len (rad2deg move_rot))
     ;; (before-push-pose)
     ;; (make-reset-pose)
-    ;; (if (> move_rot 50)  ;; to move demo more correct
-    ;;	(setq move_len (- move_len 100)))
+    (if (> move_rot 45)  ;; to move demo more correct
+	(setq move_len (- move_len 100)))
     (go-vel-rotate move_rot)
-    (rotate-ref-wall move_rot (deg2rad 5))
+    (rotate-ref-wall move_rot (deg2rad 10))
     (go-vel-linear (/ move_len 1000.0) 2)
     (when *pass-to-human-flag*
       (go-vel-rotate (* -1 move_rot))
@@ -152,7 +152,7 @@
     (make-reset-pose)
     (if (not *pass-to-human-flag*)
 	(go-vel-rotate (* -1 move_rot)))
-    (rotate-ref-wall 0.0 (deg2rad 5))
+    (rotate-ref-wall 0.0 (deg2rad 10))
     (setq wall_x (get-distance-wall 320 240))
     (format t "wall_x: ~A, *wall-x*: ~A~%" wall_x *wall-x*)
     (go-vel-linear (/ (- wall_x *wall-x*) 1000.0) 1)
