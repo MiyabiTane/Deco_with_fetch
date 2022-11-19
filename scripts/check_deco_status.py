@@ -18,9 +18,10 @@ HIST_TH = 0.1
 class CheckDecoStatus:
     def __init__(self):
         self.share_dir_path = package_path + "/scripts/share/"
-        self.images_dir_path = ""
-
         self.bridge = CvBridge()
+
+    def init_param(self):
+        self.images_dir_path = ""
         self.result_img = None
         self.ideal_ga_img = None
         self.decorated_imgs = []
@@ -35,6 +36,7 @@ class CheckDecoStatus:
             self.input_imgs.append(input_img)
 
     def check_status_srv_cb(self, req):
+        self.init_param()
         self.images_dir_path = package_path + "/scripts/images/" + str(req.deco_count) + "/"
         self.result_img = self.bridge.imgmsg_to_cv2(req.back_img, desired_encoding="bgr8")
         # self.result_img = cv2.imread(self.images_dir_path + "result_fake.jpg")
@@ -101,6 +103,7 @@ class CheckDecoStatus:
             decorated_img = self.result_img[min(lt[1], rt[1]): max(lb[1], rb[1]), min(lt[0], lb[0]): max(rt[0], rb[0])]
             try:
                 cv2.imwrite(self.images_dir_path + "decorated" + str(i) + ".jpg", decorated_img)
+                decorated_img = cv2.imread(self.images_dir_path + "decorated" + str(i) + ".jpg")
             except:
                 print("imwrite error")
             self.decorated_imgs.append(decorated_img)

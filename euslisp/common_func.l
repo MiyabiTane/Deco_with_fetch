@@ -330,8 +330,9 @@
       (setq box_dims (elt box_coords_dims 1))
       (setq box_y (elt box_pos 1))
       (setq box_z (elt box_pos 2))
-      (when (and (and (and (> box_y -800) (< box_y 800)) (< box_z 1700))
-		 (and (> (elt box_dims 0) 70) (> (elt box_dims 1) 70)))
+      (when (and (and (and (and (> box_y -800) (< box_y 800)) (< box_z 1700))
+		      (and (> (elt box_dims 0) 70) (> (elt box_dims 1) 70)))
+		 (and (< (elt box_dims 0) 400) (< (elt box_dims 1) 400)))
 	(format t "box_pos: ~A~%" box_pos)
 	(setq *bboxes* (append *bboxes* (list box_msg)))
 	(setq boxes_pos_dims_lst

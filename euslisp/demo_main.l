@@ -96,8 +96,8 @@
   (catch-balloon)
   (place-balloon)
   (check-decoration)
-  ;; (if (<= *HUMAN-WILL-VAL* 0.5)
-  ;;     (interact-robot-to-human))
+  (if (<= *HUMAN-WILL-VAL* 0.5)
+      (interact-robot-to-human))
   )
 
 (defun set-sim ()

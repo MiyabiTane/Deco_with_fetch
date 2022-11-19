@@ -104,6 +104,11 @@ class ChatNode(object):
             self.pub_instruct.publish(instruct_msg)
 
             best_response = self.make_chat_response(listen_text)
+
+            # Publish for eyebrows expression
+            pub_msg = String()
+            pub_msg.data = best_response
+            self.pub.publish(pub_msg)
             # Speak
             rospy.sleep(0.5)
             speak_msg = SoundRequestGoal()
@@ -113,12 +118,8 @@ class ChatNode(object):
             speak_msg.sound_request.arg = best_response
             speak_msg.sound_request.arg2 = self.arg2
             self.actionlib_client.send_goal(speak_msg)
-            self.actionlib_client.wait_for_result()
+            # self.actionlib_client.wait_for_result()
 
-            # Publish for eyebrows expression
-            pub_msg = String()
-            pub_msg.data = best_response
-            self.pub.publish(pub_msg)
 
     def flag_cb(self, msg):
         self.instruct_flag = msg.data
