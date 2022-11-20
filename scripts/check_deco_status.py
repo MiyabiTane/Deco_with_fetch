@@ -100,7 +100,11 @@ class CheckDecoStatus:
         for i in range(len(decos_rec_uv)):
             lt, lb, rt, rb = self.reorder_point(decos_rec_uv[i].xs, decos_rec_uv[i].ys)
             debug_decorated_img = self.debug_draw_line(debug_decorated_img, lt, lb, rt, rb)
-            decorated_img = self.result_img[min(lt[1], rt[1]): max(lb[1], rb[1]), min(lt[0], lb[0]): max(rt[0], rb[0])]
+            min_ypos = min(max(0, min(lt[1], rt[1])), 480)
+            max_ypos = min(max(0, max(lb[1], rb[1])), 480)
+            min_xpos = min(max(0, min(lt[0], lb[0])), 640)
+            max_xpos = min(max(0, max(rt[0], rb[0])), 640)
+            decorated_img = self.result_img[min_ypos: max_ypos, min_xpos: max_xpos]
             try:
                 cv2.imwrite(self.images_dir_path + "decorated" + str(i) + ".jpg", decorated_img)
                 decorated_img = cv2.imread(self.images_dir_path + "decorated" + str(i) + ".jpg")

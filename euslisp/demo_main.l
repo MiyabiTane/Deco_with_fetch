@@ -34,6 +34,7 @@
 (setq *torso-z* 50)
 (setq *deco-loop-num* 0)
 (setq *find-rot-num* 4)
+(setq *HUMAN-WILL-VAL* 0.5)  ;; 0~1
 
 (defun init-global-param ()
   (setq pre_x -1)
@@ -52,7 +53,6 @@
   (send *instruct-msg* :called_count -1)
   (send *instruct-msg* :is_finish t)
   (setq *deco-result-lst* '())
-  (setq *HUMAN-WILL-VAL* 0.5)  ;; 0~1
   )
 
 ;; load files

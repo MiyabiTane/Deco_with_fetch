@@ -65,9 +65,9 @@ class ChatNode(object):
             best_response = "ごめんなさい、聞き取れませんでした"
         else:
             best_response = response_json['bestResponse']['utterance']
-        rospy.loginfo("mebo output: {}".format(best_response))
         if "応答の取得に失敗しました" in best_response:
             best_response = "ごめんなさい、聞き取れませんでした"
+        rospy.loginfo("mebo output: {}".format(best_response))
         return best_response
 
     def chat_cb(self, msg):

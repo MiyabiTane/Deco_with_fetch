@@ -65,10 +65,11 @@ def remove_dup_deco(init_img, back_img, called_count):
     contours, _hierarchy = cv2.findContours(diff_img ,cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         if cv2.contourArea(cnt) > SIZE_TH:
-            lx, ly, w, h = cv2.boundingRect(cnt)
-            rx, ry = lx + w, ly + h
-            if not check_dup(lx, ly, rx, ry, decorated_pos):
-                decorated_pos.append((int(lx), int(ly), int(rx), int(ry)))
+            if cv2.contourArea(cnt) < 480 * 640 / 3.0:
+                lx, ly, w, h = cv2.boundingRect(cnt)
+                rx, ry = lx + w, ly + h
+                if not check_dup(lx, ly, rx, ry, decorated_pos):
+                    decorated_pos.append((int(lx), int(ly), int(rx), int(ry)))
     # debug
     for lx, ly, rx, ry in decorated_pos:
         cv2.rectangle(diff_img, (lx, ly), (rx, ry), (255, 0, 0), thickness=2, lineType=cv2.LINE_4)
@@ -177,7 +178,11 @@ class ThinkDecoration:
         for i, deco_img in enumerate(self.imgs):
             pos_x, pos_y, h, w = gene[i]
             mask_img = self.masks[i]
-            back_img = output_img[int(pos_y - h/2.0): int(pos_y + h/2.0), int(pos_x - w/2.0): int(pos_x + w/2.0)]
+            min_ypos = min(max(0, int(pos_y - h/2.0)), 480)
+            max_ypos = min(max(0, int(pos_y + h/2.0)), 480)
+            min_xpos = min(max(0, int(pos_x - w/2.0)), 640)
+            max_xpos = min(max(0, int(pos_x + w/2.0)), 640)
+            back_img = output_img[min_ypos: max_ypos, min_xpos: max_xpos]
             # print(back_img.shape, deco_img.shape, mask_img.shape)
             try:
                 deco_img[mask_img < 150] = [0, 0, 0]
