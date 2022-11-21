@@ -14,6 +14,7 @@ from cv_bridge import CvBridge
 
 package_path = roslib.packages.get_pkg_dir('deco_with_fetch')
 HIST_TH = 0.1
+DISTANCE_TH = 50
 
 class CheckDecoStatus:
     def __init__(self):
@@ -39,7 +40,7 @@ class CheckDecoStatus:
         self.init_param()
         self.images_dir_path = package_path + "/scripts/images/" + str(req.deco_count) + "/"
         self.result_img = self.bridge.imgmsg_to_cv2(req.back_img, desired_encoding="bgr8")
-        # self.result_img = cv2.imread(self.images_dir_path + "result_fake.jpg")
+        # self.result_img = cv2.imread(self.images_dir_path + "result.jpg")
         cv2.imwrite(self.images_dir_path + "result.jpg", self.result_img)
         self.ideal_ga_img = cv2.imread(self.share_dir_path + "ga_output_" + str(req.deco_count) + ".jpg")
         self.set_input_imgs(req.deco_count)
@@ -128,6 +129,32 @@ class CheckDecoStatus:
             if ret > max_sim_point:
                 ans_num = i
                 max_sim_point = ret
+        print("matched_num: {}".format(ans_num))
+        if ans_num == -1:
+            ans_num = self.get_similar_img_num_retry(target_img, imgs)
+        return ans_num
+
+    def get_average_color(self, img):
+        h, w, c = img.shape
+        color_arr = img.reshape(h * w, c)
+        color_mean = np.mean(color_arr, axis=0)
+        color_mean = np.array(color_mean) * 382 / np.sum(color_mean)
+        color_mean = color_mean.astype(int)
+        return color_mean
+
+    def get_similar_img_num_retry(self, target_img, imgs):
+        # use average color
+        print(" - - retry - - ")
+        ans_num = -1
+        min_distance = DISTANCE_TH
+        target_color = self.get_average_color(target_img)
+        for i, img in enumerate(imgs):
+            compare_color = self.get_average_color(img)
+            distance = np.linalg.norm(np.array(target_color) - np.array(compare_color))
+            print("{}: {}  {} {}".format(i, distance, target_color, compare_color))
+            if distance < min_distance:
+                ans_num = i
+                min_distance = distance
         print("matched_num: {}".format(ans_num))
         return ans_num
 
