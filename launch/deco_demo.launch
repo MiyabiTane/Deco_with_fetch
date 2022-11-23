@@ -107,7 +107,7 @@
   <arg name="apikey_path" default="$(find deco_with_fetch)/json/apikey.json" />
   <node name="chat_node"
 	pkg="deco_with_fetch" type="chat_node.py"
-	output="screen" respawn="false">
+	output="screen" respawn="true">
     <rosparam subst_value="true">
       apikey_path: $(arg apikey_path)
     </rosparam>
@@ -125,12 +125,12 @@
 
   <node name="eyebrows_topic_relay"
 	pkg="deco_with_fetch" type="eyebrows_topic_relay.py"
-	output="screen" respawn="false">
+	output="screen" respawn="true">
   </node>
 
   <node name="eyebrows_expression"
 	pkg="deco_with_fetch" type="eyebrows_expression.py"
-	output="screen" respawn="false">
+	output="screen" respawn="true">
   </node>
 
 
