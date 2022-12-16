@@ -65,6 +65,7 @@
 (load "check_decoration.l")
 (load "interact_with_human.l")
 (load "instruct_robot_to_human.l")
+(load "suggest_to_human.l")
 
 ;; (load "test_manip_balloon.l")
 
@@ -94,6 +95,7 @@
   (recognize-decoration)
   (think-decoration)
   (catch-balloon)
+  (suggest-if-asked 10)
   (place-balloon)
   (check-decoration)
   (if (<= *HUMAN-WILL-VAL* 0.5)

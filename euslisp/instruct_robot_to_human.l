@@ -4,16 +4,6 @@
 (setq *ibox-search-range* 300)
 (setq *check-distance* 50)
 
-(defun pointing-pos (target_pos)
-  (let* ((pointing_x 600)
-	 (pointing_pos (float-vector pointing_x (elt target_pos 1) (elt target_pos 2)))
-	 (ik_res nil))
-    (while (not ik_res)
-      (setq ik_res (inv-from-reset-pose pointing_pos))
-      (setq pointing_pos (v+ pointing_pos #f(50 0 0))))
-    (send-robot 4000)
-    ;; (view-debug-pos target_pos)
-    ))
 
 (defun check-if-instruct (ideal_pos)
   (let* ((instruct_flag t) (distance))
@@ -104,7 +94,7 @@
 	(setq *HUMAN-WILL-VAL* (min 1.0 (+ *HUMAN-WILL-VAL* 0.3))))
       (format t "*HUMAN-WILL-VAL* ~A~%" *HUMAN-WILL-VAL*)
       (format t "replaced_flag ~A~%" replaced_flag)
-    )))
+      )))
 
 (defun robot-to-human-test ()
   (check-decoration-test)

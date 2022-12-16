@@ -15,7 +15,8 @@
 	 (real_wall_x init_wall_x)
 	 (try_count 0)
 	 (push_x push_x)
-	 (instruct_mode_flag nil))
+	 (instruct_mode_flag nil)
+	 (pre_human_will_val *HUMAN-WILL-VAL*))
     (switch-chat-mode t)
     (ros::subscribe *interact-sub-topic* deco_with_fetch::InstructInfo #'instruct-cb)
     (when (>= *HUMAN-WILL-VAL* 0.7)
@@ -46,6 +47,9 @@
 	(if (< (- real_wall_x init_wall_x) -500)  ;; remove bug
 	    (setq init_wall_x real_wall_x))
 	(setq try_count (+ try_count 1))))
+    (when (>= pre_human_will_val 0.7)
+      (when (= *HUMAN-WILL-VAL* pre_human_will_val)
+	(setq *HUMAN-WILL-VAL* (- *HUMAN-WILL-VAL* 0.1))))
     ))
 
 (defun place-balloon-manip (place_pos)
