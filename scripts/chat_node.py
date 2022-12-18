@@ -117,8 +117,13 @@ class ChatNode(object):
             speak_msg.sound_request.sound = self.sound
             speak_msg.sound_request.arg = best_response
             speak_msg.sound_request.arg2 = self.arg2
-            self.actionlib_client.send_goal(speak_msg)
-            # self.actionlib_client.wait_for_result()
+            speak_flag = True
+            if "どこ" in listen_text:
+                if "置く" in listen_text or "置い" in listen_text:
+                    speak_flag = False
+            if speak_flag:
+                self.actionlib_client.send_goal(speak_msg)
+                # self.actionlib_client.wait_for_result()
 
 
     def flag_cb(self, msg):
